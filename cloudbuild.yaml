@@ -1,0 +1,12 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/no-design", "."]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/$PROJECT_ID/no-design"]
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: "gcloud"
+    args: ["run", "deploy", "no-design", "--image", "gcr.io/$PROJECT_ID/no-design", "--platform", "managed", "--region", "us-central1", "--allow-unauthenticated", "--service-account", "10169811450-compute@developer.gserviceaccount.com"]
+options:
+  logging: CLOUD_LOGGING_ONLY
+images:
+  - "gcr.io/$PROJECT_ID/no-design"
