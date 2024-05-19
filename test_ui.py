@@ -11,7 +11,7 @@ def browser():
 
 def test_ui(browser):
     page = browser.new_page()
-    page.goto("http://localhost:8080/static/index.html")
+    page.goto("http://localhost:8080/")
 
     # Test form submission
     page.fill("input[name='url']", "http://example.com")
