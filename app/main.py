@@ -9,11 +9,11 @@ import os
 app = FastAPI()
 
 # Mount the static files directory
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="templates"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 def read_root():
-    with open(os.path.join("static", "index.html")) as f:
+    with open(os.path.join("templates", "index.html")) as f:
         return HTMLResponse(content=f.read(), status_code=200)
 
 @app.get("/extract-text")
