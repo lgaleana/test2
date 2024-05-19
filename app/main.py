@@ -1,9 +1,13 @@
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 from pydantic import HttpUrl
 import requests
 from bs4 import BeautifulSoup
 
 app = FastAPI()
+
+# Mount the static files directory
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/extract-text")
 def extract_text(url: HttpUrl = Query(..., description="The URL to extract text from")):
