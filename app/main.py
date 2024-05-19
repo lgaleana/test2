@@ -9,7 +9,7 @@ import os
 app = FastAPI()
 
 # Mount the static files directory
-app.mount("/static", StaticFiles(directory="templates"), name="static")
+app.mount("/static", StaticFiles(directory="templates/static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 def read_root():
