@@ -35,3 +35,11 @@ def test_extract_text_request_exception():
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 400
         assert response.json() == {"detail": "Request failed"}
+
+
+def test_extract_text_bermuda():
+    url = "https://thinkingofbermuda.com"
+    
+    response = client.get("/extract-text", params={"url": url})
+    assert response.status_code == 200
+    assert "text" in response.json()
