@@ -21,8 +21,12 @@ def read_root(request: Request):
 
 @app.get("/extract-text")
 def extract_text(url: HttpUrl = Query(..., description="The URL to extract text from")):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    }
     try:
-        response = requests.get(url)
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
     except requests.RequestException as e:
         raise HTTPException(status_code=400, detail=str(e))
