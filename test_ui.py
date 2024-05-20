@@ -8,6 +8,7 @@ def browser():
         yield browser
         browser.close()
 
+
 def test_ui(browser):
     page = browser.new_page()
 
@@ -15,7 +16,7 @@ def test_ui(browser):
     page.route("**/extract-text?url=http%3A%2F%2Fexample.com", lambda route: route.fulfill(
         status=200,
         content_type="application/json",
-        body='{"text": "Example Domain", "images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"], "headlines": ["Mocked Ad Headline 1", "Mocked Ad Headline 2"]}'
+        body='{"text": "Example Domain", "images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"], "headlines": ["Mocked Ad Headline", "Another Mocked Headline"]}'
     ))
 
     page.goto("http://localhost:8080/")
@@ -44,7 +45,8 @@ def test_ui(browser):
 
     # Verify the headlines
     headlines = page.query_selector_all("#image-result p")
-    expected_headlines = ["Mocked Ad Headline 1", "Mocked Ad Headline 2"]
+    expected_headlines = ["Mocked Ad Headline", "Another Mocked Headline"]
     for headline, expected_text in zip(headlines, expected_headlines):
         text = headline.text_content()
         assert text == expected_text
+        assert len(text.split()) <= 5  # Ensure each headline is no more than 5 words
