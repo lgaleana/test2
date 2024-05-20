@@ -6,6 +6,10 @@ from pydantic import HttpUrl
 import requests
 from bs4 import BeautifulSoup
 import os
+import openai
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -15,9 +19,24 @@ app.mount("/static", StaticFiles(directory="templates/static"), name="static")
 # Configure Jinja2 templates
 templates = Jinja2Templates(directory="templates")
 
+# Set OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+def generate_headline(text: str, image_url: str) -> str:
+    prompt = f"Generate a catchy headline for an image with the following description:\n\n{text}\n\nImage URL: {image_url}"
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=10
+    )
+    return response.choices[0].message['content'].strip()
 
 @app.get("/extract-text")
 def extract_text(url: HttpUrl = Query(..., description="The URL to extract text from")):
@@ -33,4 +52,11 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
 
     soup = BeautifulSoup(response.content, "html.parser")
     text = soup.get_text(separator="\n", strip=True)
-    return {"text": text}
+    images = [img['src'] for img in soup.find_all('img') if 'src' in img.attrs]
+
+    headlines = []
+    for image_url in images:
+        headline = generate_headline(text, image_url)
+        headlines.append({"image_url": image_url, "headline": headline})
+
+    return {"text": text, "headlines": headlines}
