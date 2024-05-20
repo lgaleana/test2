@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 import requests
+import os
 from bs4 import BeautifulSoup
 from app.main import app
 from app.openai_utils import generate_headline
@@ -94,3 +95,23 @@ def test_extract_images():
         "http://example.com/image4.jpg"
     ]
     assert extract_images(soup) == expected_images
+
+
+def test_extract_images_with_limit():
+    html_content = """
+    <html>
+        <body>
+            <img src="http://example.com/image1.jpg" />
+            <img src="http://example.com/image2.jpg" />
+            <img src="http://example.com/image3.jpg" />
+            <img src="http://example.com/image4.jpg" />
+        </body>
+    </html>
+    """
+    soup = BeautifulSoup(html_content, "html.parser")
+    with patch.dict(os.environ, {"N_IMAGES": "2"}):
+        expected_images = [
+            "http://example.com/image1.jpg",
+            "http://example.com/image2.jpg"
+        ]
+        assert extract_images(soup) == expected_images
