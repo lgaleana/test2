@@ -51,8 +51,15 @@ button:hover {
     margin: 10px 0;
 }
 
+.image-container img {
+    display: block;
+    max-width: 100%;
+}
+
 .draggable {
     position: absolute;
+    top: 10px; /* Adjust as needed */
+    left: 10px; /* Adjust as needed */
     cursor: move;
     user-select: none;
     padding: 5px;
