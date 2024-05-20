@@ -54,4 +54,5 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     # Generate headlines for each image
     headlines = [generate_headline(client, text, image) for image in images]
 
-    return {"text": text, "images": images, "headlines": headlines}
+    # Return only images and headlines
+    return {"images": images, "headlines": headlines}

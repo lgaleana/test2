@@ -1,18 +1,15 @@
 document.getElementById('url-form').addEventListener('submit', async function(event) {
     event.preventDefault();
     const urlInput = document.getElementById('url-input').value;
-    const textResultDiv = document.getElementById('text-result');
     const imageResultDiv = document.getElementById('image-result');
-    const resultDiv = document.getElementById('result');
     
-    textResultDiv.textContent = 'Loading...';
-    imageResultDiv.innerHTML = ''; // Clear previous images
+    imageResultDiv.innerHTML = 'Loading...'; // Clear previous images
 
     try {
         const response = await fetch(`/extract-text?url=${encodeURIComponent(urlInput)}`);
         const data = await response.json();
         if (response.ok) {
-            textResultDiv.textContent = data.text;
+            imageResultDiv.innerHTML = ''; // Clear loading text
 
             // Display images and headlines
             data.images.forEach((src, index) => {
@@ -48,9 +45,9 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 }
             });
         } else {
-            textResultDiv.textContent = `Error: ${data.detail}`;
+            imageResultDiv.textContent = `Error: ${data.detail}`;
         }
     } catch (error) {
-        textResultDiv.textContent = `Error: ${error.message}`;
+        imageResultDiv.textContent = `Error: ${error.message}`;
     }
 });
