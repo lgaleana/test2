@@ -1,12 +1,15 @@
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 import requests
 from bs4 import BeautifulSoup
-from app.main import app, generate_headline
+from app.main import app
+from app.openai_utils import generate_headline, get_openai_client
 from app.scraping import extract_images
+import os
 
 client = TestClient(app)
+
 
 def mock_openai_chat_completion_create(*args, **kwargs):
     class MockResponse:
@@ -19,12 +22,23 @@ def mock_openai_chat_completion_create(*args, **kwargs):
 
     return MockResponse()
 
+@pytest.fixture(autouse=True)
+def set_openai_api_key():
+    with patch.dict(os.environ, {"OPENAI_API_KEY": "test"}):
+        yield
+
+
 def test_generate_headline():
     text = "This is a sample website text."
     image_url = "http://example.com/image.jpg"
-    with patch("openai.ChatCompletion.create", side_effect=mock_openai_chat_completion_create):
+    with patch("app.openai_utils.get_openai_client") as mock_get_client:
+        mock_client = MagicMock()
+        mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
+        mock_get_client.return_value = mock_client
+
         headline = generate_headline(text, image_url)
         assert headline == "Mocked Ad Headline"
+
 
 def test_extract_text_success():
     url = "http://example.com"
@@ -41,7 +55,11 @@ def test_extract_text_success():
     expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
     expected_headlines = ["Mocked Ad Headline", "Mocked Ad Headline"]
 
-    with patch("requests.get") as mock_get, patch("openai.ChatCompletion.create", side_effect=mock_openai_chat_completion_create):
+    with patch("requests.get") as mock_get, patch("app.openai_utils.get_openai_client") as mock_get_client:
+        mock_client = MagicMock()
+        mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
+        mock_get_client.return_value = mock_client
+
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = html_content
 
@@ -49,9 +67,11 @@ def test_extract_text_success():
         assert response.status_code == 200
         assert response.json() == {"text": expected_text, "images": expected_images, "headlines": expected_headlines}
 
+
 def test_extract_text_invalid_url():
     response = client.get("/extract-text", params={"url": "invalid-url"})
     assert response.status_code == 422
+
 
 def test_extract_text_request_exception():
     url = "http://example.com"
@@ -63,15 +83,21 @@ def test_extract_text_request_exception():
         assert response.status_code == 400
         assert response.json() == {"detail": "Request failed"}
 
+
 def test_extract_text_bermuda():
     url = "https://thinkingofbermuda.com"
     
-    with patch("openai.ChatCompletion.create", side_effect=mock_openai_chat_completion_create):
+    with patch("app.openai_utils.get_openai_client") as mock_get_client:
+        mock_client = MagicMock()
+        mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
+        mock_get_client.return_value = mock_client
+
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
         assert "text" in response.json()
         assert "images" in response.json()
         assert "headlines" in response.json()
+
 
 def test_extract_images():
     html_content = """
