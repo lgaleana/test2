@@ -17,6 +17,7 @@ def test_generate_headline():
     mock_client = mock_openai_client()
     headline = generate_headline(mock_client, text, image_url)
     assert headline == "Mocked Ad Headline"
+    assert len(headline.split()) <= 5  # Ensure the headline is no more than 5 words
 
 
 def test_extract_text_success():
@@ -41,6 +42,8 @@ def test_extract_text_success():
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
         assert response.json() == {"text": expected_text, "images": expected_images, "headlines": expected_headlines}
+        for headline in response.json()["headlines"]:
+            assert len(headline.split()) <= 5  # Ensure each headline is no more than 5 words
 
 
 def test_extract_text_invalid_url():
@@ -68,6 +71,8 @@ def test_extract_text_bermuda():
         assert "text" in response.json()
         assert "images" in response.json()
         assert "headlines" in response.json()
+        for headline in response.json()["headlines"]:
+            assert len(headline.split()) <= 5  # Ensure each headline is no more than 5 words
 
 
 def test_extract_images():
