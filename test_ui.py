@@ -44,12 +44,22 @@ def test_ui(browser):
         assert src == expected_src
 
     # Verify the headlines
-    headlines = page.query_selector_all("#image-result p")
+    headlines = page.query_selector_all("#image-result p.draggable")
     expected_headlines = ["Mocked Ad Headline", "Another Mocked Headline"]
     for headline, expected_text in zip(headlines, expected_headlines):
         text = headline.text_content()
         assert text == expected_text
         assert len(text.split()) <= 5  # Ensure each headline is no more than 5 words
+
+    # Test drag-and-drop functionality
+    for headline in headlines:
+        box = headline.bounding_box()
+        page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
+        page.mouse.down()
+        page.mouse.move(box['x'] + 100, box['y'] + 100)
+        page.mouse.up()
+        new_box = headline.bounding_box()
+        assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
 
 
 def test_ui_with_limited_images(browser):
@@ -87,9 +97,19 @@ def test_ui_with_limited_images(browser):
         assert src == expected_src
 
     # Verify the headlines
-    headlines = page.query_selector_all("#image-result p")
+    headlines = page.query_selector_all("#image-result p.draggable")
     expected_headlines = ["Mocked Ad Headline"]
     for headline, expected_text in zip(headlines, expected_headlines):
         text = headline.text_content()
         assert text == expected_text
         assert len(text.split()) <= 5  # Ensure each headline is no more than 5 words
+
+    # Test drag-and-drop functionality
+    for headline in headlines:
+        box = headline.bounding_box()
+        page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
+        page.mouse.down()
+        page.mouse.move(box['x'] + 100, box['y'] + 100)
+        page.mouse.up()
+        new_box = headline.bounding_box()
+        assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed

@@ -44,3 +44,19 @@ button:hover {
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
+.image-container {
+    position: relative;
+    display: inline-block;
+    margin: 10px 0;
+}
+
+.draggable {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+    padding: 5px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
