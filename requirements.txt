@@ -6,3 +6,5 @@ pytest-playwright
 beautifulsoup4
 requests
 jinja2
+openai
+python-dotenv

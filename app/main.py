@@ -7,6 +7,14 @@ import requests
 from bs4 import BeautifulSoup
 import os
 from app.scraping import extract_images
+from dotenv import load_dotenv
+import openai
+
+# Load environment variables
+load_dotenv()
+
+# Initialize OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 
@@ -19,6 +27,20 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+
+def generate_headline(text: str, image_url: str) -> str:
+    prompt = f"Generate an ad headline for the following image URL based on the website text:\n\nWebsite Text:\n{text}\n\nImage URL: {image_url}\n\nAd Headline:"
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=50
+    )
+    return response.choices[0].message['content'].strip()
+
 
 @app.get("/extract-text")
 def extract_text(url: HttpUrl = Query(..., description="The URL to extract text and images from")):
@@ -34,8 +56,12 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
 
     soup = BeautifulSoup(response.content, "html.parser")
     text = soup.get_text(separator="\n", strip=True)
+    text = "\n".join([line for line in text.split("\n") if line.strip()])  # Remove empty lines
 
     # Extract images using the utility method
     images = extract_images(soup)
 
-    return {"text": text, "images": images}
+    # Generate headlines for each image
+    headlines = [generate_headline(text, image) for image in images]
+
+    return {"text": text, "images": images, "headlines": headlines}
