@@ -34,7 +34,12 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     soup = BeautifulSoup(response.content, "html.parser")
     text = soup.get_text(separator="\n", strip=True)
 
-    # Extract images from various tags
+    # Extract images using the utility method
+    images = extract_images(soup)
+
+    return {"text": text, "images": images}
+
+def extract_images(soup):
     images = []
     for img in soup.find_all(["img", "meta", "link", "source"]):
         if img.name == "img" and img.get("src"):
@@ -45,5 +50,4 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
             images.append(img["href"])
         elif img.name == "source" and img.get("srcset"):
             images.append(img["srcset"].split()[0])  # Take the first URL in srcset
-
-    return {"text": text, "images": images}
+    return images
