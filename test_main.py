@@ -32,7 +32,6 @@ def test_extract_text_success():
         </body>
     </html>
     """
-    expected_text = "Hello, World!"
     expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
     expected_headlines = ["Mocked Ad Headline", "Mocked Ad Headline"]
 
@@ -42,7 +41,7 @@ def test_extract_text_success():
 
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
-        assert response.json() == {"text": expected_text, "images": expected_images, "headlines": expected_headlines}
+        assert response.json() == {"images": expected_images, "headlines": expected_headlines}
         for headline in response.json()["headlines"]:
             assert len(headline.split()) <= 5  # Ensure each headline is no more than 5 words
 
@@ -69,7 +68,6 @@ def test_extract_text_bermuda():
     with patch("app.main.OpenAI", return_value=mock_openai_client()):
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
-        assert "text" in response.json()
         assert "images" in response.json()
         assert "headlines" in response.json()
         for headline in response.json()["headlines"]:
