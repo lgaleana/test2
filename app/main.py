@@ -6,6 +6,7 @@ from pydantic import HttpUrl
 import requests
 from bs4 import BeautifulSoup
 import os
+from app.scraping import extract_images
 
 app = FastAPI()
 
@@ -38,16 +39,3 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     images = extract_images(soup)
 
     return {"text": text, "images": images}
-
-def extract_images(soup):
-    images = []
-    for img in soup.find_all(["img", "meta", "link", "source"]):
-        if img.name == "img" and img.get("src"):
-            images.append(img["src"])
-        elif img.name == "meta" and img.get("content") and "image" in img.get("property", ""):
-            images.append(img["content"])
-        elif img.name == "link" and img.get("href") and "image" in img.get("type", ""):
-            images.append(img["href"])
-        elif img.name == "source" and img.get("srcset"):
-            images.append(img["srcset"].split()[0])  # Take the first URL in srcset
-    return images

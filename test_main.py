@@ -3,7 +3,8 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch
 import requests
 from bs4 import BeautifulSoup
-from app.main import app, extract_images
+from app.main import app
+from app.scraping import extract_images
 
 client = TestClient(app)
 
