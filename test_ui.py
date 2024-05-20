@@ -13,16 +13,16 @@ def test_ui(browser):
     page = browser.new_page()
 
     # Mock the fetch request to /extract-text
-    page.route("**/extract-text?url=http%3A%2F%2Fexample.com", lambda route: route.fulfill(
+    page.route("**/extract-text?url=https%3A%2F%2Fthinkingofbermuda.com", lambda route: route.fulfill(
         status=200,
         content_type="application/json",
-        body='{"text": "Example Domain", "images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"], "headlines": ["Mocked Ad Headline", "Another Mocked Headline"]}'
+        body='{"text": "Thinking of Bermuda", "images": ["https://thinkingofbermuda.com/image1.jpg", "https://thinkingofbermuda.com/image2.jpg"], "headlines": ["Bermuda Travel", "Visit Bermuda"]}'
     ))
 
     page.goto("http://localhost:8080/")
 
     # Test form submission
-    page.fill("input[name='url']", "http://example.com")
+    page.fill("input[name='url']", "https://thinkingofbermuda.com")
     page.click("button[type='submit']")
 
     # Wait for the result to be updated
@@ -31,21 +31,21 @@ def test_ui(browser):
 
     # Check the result
     result_text = page.text_content("#text-result")
-    assert "Example Domain" in result_text
+    assert "Thinking of Bermuda" in result_text
 
     # Check for images
     images = page.query_selector_all("#image-result img")
     assert len(images) == 2
 
     # Verify the image sources
-    expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
+    expected_images = ["https://thinkingofbermuda.com/image1.jpg", "https://thinkingofbermuda.com/image2.jpg"]
     for img, expected_src in zip(images, expected_images):
         src = img.get_attribute("src")
         assert src == expected_src
 
     # Verify the headlines
     headlines = page.query_selector_all("#image-result p")
-    expected_headlines = ["Mocked Ad Headline", "Another Mocked Headline"]
+    expected_headlines = ["Bermuda Travel", "Visit Bermuda"]
     for headline, expected_text in zip(headlines, expected_headlines):
         text = headline.text_content()
         assert text == expected_text
@@ -56,16 +56,16 @@ def test_ui_with_limited_images(browser):
     page = browser.new_page()
 
     # Mock the fetch request to /extract-text
-    page.route("**/extract-text?url=http%3A%2F%2Fexample.com", lambda route: route.fulfill(
+    page.route("**/extract-text?url=https%3A%2F%2Fthinkingofbermuda.com", lambda route: route.fulfill(
         status=200,
         content_type="application/json",
-        body='{"text": "Example Domain", "images": ["http://example.com/image1.jpg"], "headlines": ["Mocked Ad Headline"]}'
+        body='{"text": "Thinking of Bermuda", "images": ["https://thinkingofbermuda.com/image1.jpg"], "headlines": ["Bermuda Travel"]}'
     ))
 
     page.goto("http://localhost:8080/")
 
     # Test form submission
-    page.fill("input[name='url']", "http://example.com")
+    page.fill("input[name='url']", "https://thinkingofbermuda.com")
     page.click("button[type='submit']")
 
     # Wait for the result to be updated
@@ -74,21 +74,21 @@ def test_ui_with_limited_images(browser):
 
     # Check the result
     result_text = page.text_content("#text-result")
-    assert "Example Domain" in result_text
+    assert "Thinking of Bermuda" in result_text
 
     # Check for images
     images = page.query_selector_all("#image-result img")
     assert len(images) == 1
 
     # Verify the image sources
-    expected_images = ["http://example.com/image1.jpg"]
+    expected_images = ["https://thinkingofbermuda.com/image1.jpg"]
     for img, expected_src in zip(images, expected_images):
         src = img.get_attribute("src")
         assert src == expected_src
 
     # Verify the headlines
     headlines = page.query_selector_all("#image-result p")
-    expected_headlines = ["Mocked Ad Headline"]
+    expected_headlines = ["Bermuda Travel"]
     for headline, expected_text in zip(headlines, expected_headlines):
         text = headline.text_content()
         assert text == expected_text
