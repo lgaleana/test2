@@ -1,37 +1,14 @@
 import pytest
 from fastapi.testclient import TestClient
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import requests
 from bs4 import BeautifulSoup
 from app.main import app
 from app.openai_utils import generate_headline, get_openai_client
 from app.scraping import extract_images
-import os
+from test_utils import set_openai_api_key, mock_openai_client
 
 client = TestClient(app)
-
-
-def mock_openai_chat_completion_create(*args, **kwargs):
-    class MockResponse:
-        def __init__(self):
-            self.choices = [self]
-
-        @property
-        def message(self):
-            return {"content": "Mocked Ad Headline"}
-
-    return MockResponse()
-
-@pytest.fixture(autouse=True)
-def set_openai_api_key():
-    with patch.dict(os.environ, {"OPENAI_API_KEY": "test"}):
-        yield
-
-
-def mock_openai_client():
-    mock_client = MagicMock()
-    mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
-    return mock_client
 
 
 def test_generate_headline():
