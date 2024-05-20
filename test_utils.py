@@ -10,7 +10,10 @@ def mock_openai_chat_completion_create(*args, **kwargs):
 
         @property
         def message(self):
-            return {"content": "Mocked Ad Headline"}
+            class Message:
+                def __init__(self):
+                    self.content = "Mocked Ad Headline"
+            return Message()
 
     return MockResponse()
 
