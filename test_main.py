@@ -18,7 +18,7 @@ def test_extract_text_success():
 
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
-        assert response.json() == {"text": expected_text}
+        assert response.json() == {"text": expected_text, "images": []}
 
 
 def test_extract_text_invalid_url():
@@ -43,3 +43,32 @@ def test_extract_text_bermuda():
     response = client.get("/extract-text", params={"url": url})
     assert response.status_code == 200
     assert "text" in response.json()
+    assert "images" in response.json()
+
+
+def test_extract_text_and_images_success():
+    url = "http://example.com"
+    html_content = """
+    <html>
+        <body>
+            <p>Hello, World!</p>
+            <img src="http://example.com/image1.jpg" />
+            <div style="background-image: url('http://example.com/image2.jpg');"></div>
+            <meta property="og:image" content="http://example.com/image3.jpg" />
+        </body>
+    </html>
+    """
+    expected_text = "Hello, World!"
+    expected_images = [
+        "http://example.com/image1.jpg",
+        "http://example.com/image2.jpg",
+        "http://example.com/image3.jpg"
+    ]
+
+    with patch("requests.get") as mock_get:
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = html_content
+
+        response = client.get("/extract-text", params={"url": url})
+        assert response.status_code == 200
+        assert response.json() == {"text": expected_text, "images": expected_images}

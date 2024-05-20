@@ -11,9 +11,17 @@ def browser():
 
 def test_ui(browser):
     page = browser.new_page()
+
+    # Mock the backend response for /extract-text
+    page.route("**/extract-text?url=http%3A%2F%2Fexample.com", lambda route: route.fulfill(
+        status=200,
+        content_type="application/json",
+        body='{"text": "Example Domain", "images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]}'
+    ))
+
     page.goto("http://localhost:8080/")
 
-    # Test form submission
+    # Test form submission for text extraction
     page.fill("input[name='url']", "http://example.com")
     page.click("button[type='submit']")
 
@@ -24,3 +32,9 @@ def test_ui(browser):
     # Check the result
     result_text = page.text_content("#result")
     assert "Example Domain" in result_text
+
+    # Check the images
+    images = page.query_selector_all("#result img")
+    assert len(images) > 0
+    for img in images:
+        assert img.get_attribute("src").startswith("http://example.com")
