@@ -16,7 +16,7 @@ def test_ui(browser):
     page.route("**/extract-text?url=http%3A%2F%2Fexample.com", lambda route: route.fulfill(
         status=200,
         content_type="application/json",
-        body='{"text": "Example Domain", "images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"], "headlines": ["Mocked Ad Headline", "Another Mocked Headline"]}'
+        body='{"images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"], "headlines": ["Mocked Ad Headline", "Another Mocked Headline"]}'
     ))
 
     page.goto("http://localhost:8080/")
@@ -28,10 +28,6 @@ def test_ui(browser):
     # Wait for the result to be updated
     page.wait_for_selector("#result", state="visible")
     page.wait_for_function("document.getElementById('result').textContent !== 'Loading...'")
-
-    # Check the result
-    result_text = page.text_content("#text-result")
-    assert "Example Domain" in result_text
 
     # Check for images
     images = page.query_selector_all("#image-result .image-container")
@@ -68,7 +64,7 @@ def test_ui_with_limited_images(browser):
     page.route("**/extract-text?url=http%3A%2F%2Fexample.com", lambda route: route.fulfill(
         status=200,
         content_type="application/json",
-        body='{"text": "Example Domain", "images": ["http://example.com/image1.jpg"], "headlines": ["Mocked Ad Headline"]}'
+        body='{"images": ["http://example.com/image1.jpg"], "headlines": ["Mocked Ad Headline"]}'
     ))
 
     page.goto("http://localhost:8080/")
@@ -80,10 +76,6 @@ def test_ui_with_limited_images(browser):
     # Wait for the result to be updated
     page.wait_for_selector("#result", state="visible")
     page.wait_for_function("document.getElementById('result').textContent !== 'Loading...'")
-
-    # Check the result
-    result_text = page.text_content("#text-result")
-    assert "Example Domain" in result_text
 
     # Check for images
     images = page.query_selector_all("#image-result .image-container")
@@ -111,4 +103,3 @@ def test_ui_with_limited_images(browser):
         page.mouse.up()
         new_box = headline.bounding_box()
         assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
-
