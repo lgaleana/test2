@@ -4,7 +4,7 @@ import os
 
 def extract_images(soup: BeautifulSoup) -> list:
     images = []
-    n_images = int(os.getenv("N_IMAGES", 10))  # Default to 10 if not set
+    n_images = int(os.getenv("N_IMAGES", 4))  # Default to 4 if not set
     for img in soup.find_all(["img", "meta", "link", "source"]):
         if img.name == "img" and img.get("src"):
             images.append(img["src"])
