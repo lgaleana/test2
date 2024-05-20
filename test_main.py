@@ -28,14 +28,16 @@ def set_openai_api_key():
         yield
 
 
+def mock_openai_client():
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
+    return mock_client
+
+
 def test_generate_headline():
     text = "This is a sample website text."
     image_url = "http://example.com/image.jpg"
-    with patch("app.openai_utils.get_openai_client") as mock_get_client:
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
-        mock_get_client.return_value = mock_client
-
+    with patch("app.openai_utils.get_openai_client", return_value=mock_openai_client()):
         headline = generate_headline(text, image_url)
         assert headline == "Mocked Ad Headline"
 
@@ -55,11 +57,7 @@ def test_extract_text_success():
     expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
     expected_headlines = ["Mocked Ad Headline", "Mocked Ad Headline"]
 
-    with patch("requests.get") as mock_get, patch("app.openai_utils.get_openai_client") as mock_get_client:
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
-        mock_get_client.return_value = mock_client
-
+    with patch("requests.get") as mock_get, patch("app.openai_utils.get_openai_client", return_value=mock_openai_client()):
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = html_content
 
@@ -87,11 +85,7 @@ def test_extract_text_request_exception():
 def test_extract_text_bermuda():
     url = "https://thinkingofbermuda.com"
     
-    with patch("app.openai_utils.get_openai_client") as mock_get_client:
-        mock_client = MagicMock()
-        mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
-        mock_get_client.return_value = mock_client
-
+    with patch("app.openai_utils.get_openai_client", return_value=mock_openai_client()):
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
         assert "text" in response.json()
