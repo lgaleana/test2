@@ -11,6 +11,14 @@ def browser():
 
 def test_ui(browser):
     page = browser.new_page()
+
+    # Mock the fetch request to /extract-text
+    page.route("**/extract-text?url=http%3A%2F%2Fexample.com", lambda route: route.fulfill(
+        status=200,
+        content_type="application/json",
+        body='{"text": "Example Domain", "images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]}'
+    ))
+
     page.goto("http://localhost:8080/")
 
     # Test form submission
@@ -22,5 +30,15 @@ def test_ui(browser):
     page.wait_for_function("document.getElementById('result').textContent !== 'Loading...'")
 
     # Check the result
-    result_text = page.text_content("#result")
+    result_text = page.text_content("#text-result")
     assert "Example Domain" in result_text
+
+    # Check for images
+    images = page.query_selector_all("#image-result img")
+    assert len(images) == 2
+
+    # Verify the image sources
+    expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
+    for img, expected_src in zip(images, expected_images):
+        src = img.get_attribute("src")
+        assert src == expected_src
