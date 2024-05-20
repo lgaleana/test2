@@ -12,4 +12,4 @@ def generate_headline(client, text: str, image_url: str) -> str:
         ],
         max_tokens=50
     )
-    return response.choices[0].message['content'].strip()
+    return response.choices[0].message.content.strip()  # Corrected this line
