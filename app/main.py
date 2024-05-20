@@ -7,6 +7,15 @@ import requests
 from bs4 import BeautifulSoup
 import os
 from app.scraping import extract_images
+from app.openai_utils import generate_headline  # Import the function here
+from dotenv import load_dotenv
+import openai
+
+# Load environment variables
+load_dotenv()
+
+# Initialize OpenAI API key
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 
@@ -34,8 +43,12 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
 
     soup = BeautifulSoup(response.content, "html.parser")
     text = soup.get_text(separator="\n", strip=True)
+    text = "\n".join([line for line in text.split("\n") if line.strip()])  # Remove empty lines
 
     # Extract images using the utility method
     images = extract_images(soup)
 
-    return {"text": text, "images": images}
+    # Generate headlines for each image
+    headlines = [generate_headline(text, image) for image in images]
+
+    return {"text": text, "images": images, "headlines": headlines}

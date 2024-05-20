@@ -14,14 +14,19 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
         if (response.ok) {
             textResultDiv.textContent = data.text;
 
-            // Display images
-            data.images.forEach(src => {
+            // Display images and headlines
+            data.images.forEach((src, index) => {
                 const img = document.createElement('img');
                 img.src = src;
                 img.alt = 'Extracted image';
                 img.style.maxWidth = '100%';
                 img.style.margin = '10px 0';
                 imageResultDiv.appendChild(img);
+
+                const headline = document.createElement('p');
+                headline.textContent = data.headlines[index];
+                headline.style.fontWeight = 'bold';
+                imageResultDiv.appendChild(headline);
             });
         } else {
             textResultDiv.textContent = `Error: ${data.detail}`;
