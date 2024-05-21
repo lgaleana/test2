@@ -56,6 +56,14 @@ def test_ui(browser):
         new_box = headline.bounding_box()
         assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
 
+        # Ensure the text cannot be dragged outside the image frame
+        container_box = headline.evaluate('el => { const rect = el.parentElement.getBoundingClientRect(); return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom }; }')
+        print(f"Container Box: {container_box}, New Box: {new_box}")  # Debugging information
+        assert container_box['left'] <= new_box['x']
+        assert container_box['top'] <= new_box['y']
+        assert container_box['right'] >= new_box['x'] + new_box['width']
+        assert container_box['bottom'] >= new_box['y'] + new_box['height']
+
 
 def test_ui_with_limited_images(browser):
     page = browser.new_page()
@@ -103,3 +111,11 @@ def test_ui_with_limited_images(browser):
         page.mouse.up()
         new_box = headline.bounding_box()
         assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
+
+        # Ensure the text cannot be dragged outside the image frame
+        container_box = headline.evaluate('el => { const rect = el.parentElement.getBoundingClientRect(); return { left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom }; }')
+        print(f"Container Box: {container_box}, New Box: {new_box}")  # Debugging information
+        assert container_box['left'] <= new_box['x']
+        assert container_box['top'] <= new_box['y']
+        assert container_box['right'] >= new_box['x'] + new_box['width']
+        assert container_box['bottom'] >= new_box['y'] + new_box['height']
