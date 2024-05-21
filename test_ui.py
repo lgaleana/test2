@@ -56,6 +56,16 @@ def test_ui(browser):
         new_box = headline.bounding_box()
         assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
 
+        # Mock the bounding box of the container
+        container_box = {
+            'x': 0,
+            'y': 0,
+            'width': 500,
+            'height': 500
+        }
+        assert container_box['x'] <= new_box['x'] <= container_box['x'] + container_box['width'] - new_box['width']
+        assert container_box['y'] <= new_box['y'] <= container_box['y'] + container_box['height'] - new_box['height']
+
 
 def test_ui_with_limited_images(browser):
     page = browser.new_page()
@@ -103,3 +113,13 @@ def test_ui_with_limited_images(browser):
         page.mouse.up()
         new_box = headline.bounding_box()
         assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
+
+        # Mock the bounding box of the container
+        container_box = {
+            'x': 0,
+            'y': 0,
+            'width': 500,
+            'height': 500
+        }
+        assert container_box['x'] <= new_box['x'] <= container_box['x'] + container_box['width'] - new_box['width']
+        assert container_box['y'] <= new_box['y'] <= container_box['y'] + container_box['height'] - new_box['height']
