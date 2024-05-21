@@ -1,11 +1,13 @@
-from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, HTTPException, Query, Request, Response
+from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import HttpUrl
 import requests
 from bs4 import BeautifulSoup
 import os
+from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
 from app.scraping import extract_images
 from app.openai_utils import generate_headline
 from dotenv import load_dotenv
@@ -35,10 +37,10 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     }
-    try:
+    try {
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-    except requests.RequestException as e:
+    } catch requests.RequestException as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     soup = BeautifulSoup(response.content, "html.parser")
@@ -55,3 +57,25 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     headlines = [generate_headline(client, text, image) for image in images]
 
     return {"images": images, "headlines": headlines}
+
+@app.post("/download-image")
+def download_image(image_url: str, text: str, x: int, y: int):
+    try {
+        response = requests.get(image_url)
+        response.raise_for_status()
+    } catch requests.RequestException as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    image = Image.open(BytesIO(response.content))
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()
+
+    # Draw the text on the image
+    draw.text((x, y), text, font=font, fill="black")
+
+    # Save the image to a BytesIO object
+    img_byte_arr = BytesIO()
+    image.save(img_byte_arr, format='PNG')
+    img_byte_arr.seek(0)
+
+    return StreamingResponse(img_byte_arr, media_type="image/png", headers={"Content-Disposition": "attachment; filename=overlayed_image.png"})

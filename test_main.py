@@ -8,6 +8,8 @@ from app.main import app
 from app.openai_utils import generate_headline
 from app.scraping import extract_images
 from test_utils import set_openai_api_key, mock_openai_client
+from io import BytesIO
+from PIL import Image
 
 client = TestClient(app)
 
@@ -113,3 +115,23 @@ def test_extract_images_with_limit():
             "http://example.com/image2.jpg"
         ]
         assert extract_images(soup) == expected_images
+
+
+def test_download_image():
+    image_url = "http://example.com/image.jpg"
+    text = "Sample Text"
+    x, y = 10, 10
+
+    with patch("requests.get") as mock_get:
+        # Create a simple image for testing
+        img = Image.new('RGB', (100, 100), color = (73, 109, 137))
+        img_byte_arr = BytesIO()
+        img.save(img_byte_arr, format='PNG')
+        img_byte_arr.seek(0)
+
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = img_byte_arr.read()
+
+        response = client.post("/download-image", json={"image_url": image_url, "text": text, "x": x, "y": y})
+        assert response.status_code == 200
+        assert response.headers["Content-Disposition"] == "attachment; filename=overlayed_image.png"
