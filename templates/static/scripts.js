@@ -28,8 +28,15 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 imageResultDiv.appendChild(container);
             });
 
-            // Initialize interact.js for drag-and-drop
+            // Initialize interact.js for drag-and-drop with restriction
             interact('.draggable').draggable({
+                modifiers: [
+                    interact.modifiers.restrict({
+                        restriction: 'parent',
+                        endOnly: true,
+                        elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+                    })
+                ],
                 listeners: {
                     move(event) {
                         const target = event.target;
