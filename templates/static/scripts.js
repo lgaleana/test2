@@ -25,6 +25,12 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.classList.add('draggable');
                 container.appendChild(headline);
 
+                const downloadButton = document.createElement('button');
+                downloadButton.textContent = 'Download';
+                downloadButton.classList.add('download-button');
+                downloadButton.addEventListener('click', () => downloadImage(container));
+                container.appendChild(downloadButton);
+
                 imageResultDiv.appendChild(container);
             });
 
@@ -56,3 +62,11 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
         imageResultDiv.textContent = `Error: ${error.message}`;
     }
 });
+
+async function downloadImage(container) {
+    const canvas = await html2canvas(container);
+    const link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'image_with_text.png';
+    link.click();
+}

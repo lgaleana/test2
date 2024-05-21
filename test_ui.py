@@ -46,6 +46,13 @@ def test_ui(browser):
         assert text == expected_text
         assert len(text.split()) <= 5  # Ensure each headline is no more than 5 words
 
+        # Check for download button
+        download_button = container.query_selector("button.download-button")
+        assert download_button is not None
+
+        # Simulate download button click
+        download_button.click()
+
     # Test drag-and-drop functionality
     for headline in page.query_selector_all("#image-result p.draggable"):
         box = headline.bounding_box()
