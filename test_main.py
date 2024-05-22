@@ -35,7 +35,7 @@ def test_extract_text_success():
     expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
     expected_headlines = ["Mocked Ad Headline", "Mocked Ad Headline"]
 
-    with patch("requests.get") as mock_get, patch("app.main.OpenAI", return_value=mock_openai_client()):
+    with patch("requests.get") as mock_get, patch("app.routes.OpenAI", return_value=mock_openai_client()):
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = html_content
 
@@ -65,7 +65,7 @@ def test_extract_text_request_exception():
 def test_extract_text_bermuda():
     url = "https://thinkingofbermuda.com"
     
-    with patch("app.main.OpenAI", return_value=mock_openai_client()):
+    with patch("app.routes.OpenAI", return_value=mock_openai_client()):
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
         assert "images" in response.json()

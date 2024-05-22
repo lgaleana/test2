@@ -1,6 +1,4 @@
 from openai import OpenAI
-import os
-
 
 def generate_headline(client, text: str, image_url: str) -> str:
     prompt = (
