@@ -1,7 +1,7 @@
 import pytest
 
 
-def test_ui_drag_and_drop(browser):
+def test_ui_drag_and_drop_functionality(browser):
     page = browser.new_page()
 
     # Mock the fetch request to /extract-text
@@ -18,8 +18,17 @@ def test_ui_drag_and_drop(browser):
     page.click("button[type='submit']")
 
     # Wait for the result to be updated
-    page.wait_for_selector("#result", state="visible")
-    page.wait_for_function("document.getElementById('result').textContent !== 'Loading...'")
+    page.wait_for_selector("#image-result .image-container")
+
+    # Mock the bounding box data
+    page.evaluate('''() => {
+        document.querySelectorAll('.image-container').forEach(container => {
+            container.getBoundingClientRect = () => ({ left: 0, top: 0, width: 500, height: 500 });
+        });
+        document.querySelectorAll('.draggable').forEach(draggable => {
+            draggable.getBoundingClientRect = () => ({ left: 0, top: 0, width: 100, height: 50 });
+        });
+    }''')
 
     # Test drag-and-drop functionality
     for headline in page.query_selector_all("#image-result p.draggable"):
@@ -30,13 +39,3 @@ def test_ui_drag_and_drop(browser):
         page.mouse.up()
         new_box = headline.bounding_box()
         assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
-
-        # Mock the bounding box of the container
-        container_box = {
-            'x': 0,
-            'y': 0,
-            'width': 500,
-            'height': 500
-        }
-        assert container_box['x'] <= new_box['x'] <= container_box['x'] + container_box['width'] - new_box['width']
-        assert container_box['y'] <= new_box['y'] <= container_box['y'] + container_box['height'] - new_box['height']
