@@ -1,14 +1,16 @@
 from fastapi import APIRouter, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from app.templates import templates
 from app.scraping import extract_images
 from app.openai_utils import generate_headline
+from app.image_processing import overlay_text_on_image
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
 from pydantic import HttpUrl
 import requests
 from bs4 import BeautifulSoup
+import tempfile
 
 # Load environment variables
 load_dotenv()
@@ -48,3 +50,11 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     headlines = [generate_headline(client, text, image) for image in images]
 
     return {"images": images, "headlines": headlines}
+
+@app.get("/download-image", response_class=FileResponse)
+def download_image(url: HttpUrl, text: str, x: int, y: int):
+    try:
+        image_path = overlay_text_on_image(url, text, x, y)
+        return FileResponse(image_path, media_type="image/png", filename="overlayed_image.png")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
