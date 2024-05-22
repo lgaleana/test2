@@ -30,11 +30,12 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
     }
-    try:
+    try {
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-    except requests.RequestException as e:
+    } except requests.RequestException as e {
         raise HTTPException(status_code=400, detail=str(e))
+    }
 
     soup = BeautifulSoup(response.content, "html.parser")
     text = soup.get_text(separator="\n", strip=True)
@@ -53,11 +54,12 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
 
 @app.post("/download-image")
 def download_image(image_url: HttpUrl, text: str, x: int, y: int):
-    try:
+    try {
         response = requests.get(image_url)
         response.raise_for_status()
-    except requests.RequestException as e:
+    } except requests.RequestException as e {
         raise HTTPException(status_code=400, detail=str(e))
+    }
 
     image = Image.open(BytesIO(response.content))
     draw = ImageDraw.Draw(image)
