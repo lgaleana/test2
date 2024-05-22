@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import HttpUrl
+from pydantic import BaseModel, HttpUrl
 import requests
 from bs4 import BeautifulSoup
 import os
@@ -10,6 +10,8 @@ from app.scraping import extract_images
 from app.openai_utils import generate_headline
 from dotenv import load_dotenv
 from openai import OpenAI
+from PIL import Image, ImageDraw, ImageFont
+import io
 
 # Load environment variables
 load_dotenv()
@@ -55,3 +57,23 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     headlines = [generate_headline(client, text, image) for image in images]
 
     return {"images": images, "headlines": headlines}
+
+class DownloadImageRequest(BaseModel):
+    image_url: HttpUrl
+    text: str
+
+@app.post("/download-image")
+def download_image(request: DownloadImageRequest):
+    response = requests.get(request.image_url)
+    image = Image.open(io.BytesIO(response.content))
+
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()
+    text_position = (10, 10)  # Example position, you might want to make this dynamic
+    draw.text(text_position, request.text, font=font, fill="black")
+
+    output = io.BytesIO()
+    image.save(output, format="PNG")
+    output.seek(0)
+
+    return FileResponse(output, media_type="image/png", filename="image_with_text.png")

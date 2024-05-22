@@ -25,6 +25,29 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.classList.add('draggable');
                 container.appendChild(headline);
 
+                const downloadButton = document.createElement('button');
+                downloadButton.textContent = 'Download';
+                downloadButton.style.zIndex = 10; // Ensure the button is on top
+                downloadButton.addEventListener('click', async () => {
+                    const response = await fetch('/download-image', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ image_url: src, text: data.headlines[index] })
+                    });
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'image_with_text.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                });
+                container.appendChild(downloadButton);
+
                 imageResultDiv.appendChild(container);
             });
 

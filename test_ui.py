@@ -67,7 +67,7 @@ def test_ui(browser):
         assert container_box['y'] <= new_box['y'] <= container_box['y'] + container_box['height'] - new_box['height']
 
 
-def test_ui_with_limited_images(browser):
+def test_ui_download_image(browser):
     page = browser.new_page()
 
     # Mock the fetch request to /extract-text
@@ -123,3 +123,20 @@ def test_ui_with_limited_images(browser):
         }
         assert container_box['x'] <= new_box['x'] <= container_box['x'] + container_box['width'] - new_box['width']
         assert container_box['y'] <= new_box['y'] <= container_box['y'] + container_box['height'] - new_box['height']
+
+    # Check for download button
+    download_button = page.query_selector("#image-result .image-container button")
+    assert download_button is not None
+
+    # Mock the download request
+    page.route("**/download-image", lambda route: route.fulfill(
+        status=200,
+        content_type="image/png",
+        body=b"fake image data"
+    ))
+
+    # Click the download button
+    download_button.click()
+
+    # Verify the download (this part might need adjustment based on how Playwright handles downloads)
+    # For example, you might need to check the download path or the response content

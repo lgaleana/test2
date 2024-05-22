@@ -113,3 +113,21 @@ def test_extract_images_with_limit():
             "http://example.com/image2.jpg"
         ]
         assert extract_images(soup) == expected_images
+
+
+def test_download_image():
+    url = "http://example.com/image.jpg"
+    text = "Sample Text"
+    valid_image_data = (
+        b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f'
+        b'\x15\xc4\x89\x00\x00\x00\nIDATx\xdac\xf8\x0f\x00\x01\x01\x01\x00\x18\xdd\x8d\x18\x00\x00\x00'
+        b'\x00IEND\xaeB`\x82'
+    )
+    
+    with patch("requests.get") as mock_get:
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.content = valid_image_data
+
+        response = client.post("/download-image", json={"image_url": url, "text": text})
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "image/png"
