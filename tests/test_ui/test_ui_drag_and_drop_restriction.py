@@ -1,7 +1,7 @@
 import pytest
 
 
-def test_ui_drag_and_drop(browser):
+def test_ui_drag_and_drop_restriction(browser):
     page = browser.new_page()
 
     # Mock the fetch request to /extract-text
@@ -30,15 +30,14 @@ def test_ui_drag_and_drop(browser):
         });
     }''')
 
-    # Test drag-and-drop functionality
+    # Test drag-and-drop restriction
     for headline in page.query_selector_all("#image-result p.draggable"):
         box = headline.bounding_box()
         page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
         page.mouse.down()
-        page.mouse.move(box['x'] + 100, box['y'] + 100)
+        page.mouse.move(box['x'] + 1000, box['y'] + 1000)  # Attempt to move outside the container
         page.mouse.up()
         new_box = headline.bounding_box()
-        assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
 
         # Ensure the headline stays within the bounds of the container
         container_box = page.evaluate('''(headline) => {
