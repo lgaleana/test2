@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_drag_and_drop(browser):
     page = browser.new_page()
 
@@ -18,8 +17,7 @@ def test_ui_drag_and_drop(browser):
     page.click("button[type='submit']")
 
     # Wait for the result to be updated
-    page.wait_for_selector("#result", state="visible")
-    page.wait_for_function("document.getElementById('result').textContent !== 'Loading...'")
+    page.wait_for_selector("#image-result .image-container")
 
     # Test drag-and-drop functionality
     for headline in page.query_selector_all("#image-result p.draggable"):
@@ -31,12 +29,22 @@ def test_ui_drag_and_drop(browser):
         new_box = headline.bounding_box()
         assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
 
-        # Mock the bounding box of the container
-        container_box = {
-            'x': 0,
-            'y': 0,
-            'width': 500,
-            'height': 500
-        }
+        # Ensure the headline stays within the bounds of the container
+        container_box = page.evaluate('''(headline) => {
+            const container = headline.closest('.image-container');
+            const rect = container.getBoundingClientRect();
+            return { x: rect.left, y: rect.top, width: rect.width, height: rect.height };
+        }''', headline)
+        
+        # Log the bounding boxes for debugging
+        print(f"Container Box: {container_box}")
+        print(f"New Box: {new_box}")
+
         assert container_box['x'] <= new_box['x'] <= container_box['x'] + container_box['width'] - new_box['width']
         assert container_box['y'] <= new_box['y'] <= container_box['y'] + container_box['height'] - new_box['height']
+
+        # Adjust the position if the element exceeds the container bounds
+        if new_box['height'] > container_box['height']:
+            assert new_box['y'] == container_box['y']
+        else:
+            assert container_box['y'] <= new_box['y'] <= container_box['y'] + container_box['height'] - new_box['height']
