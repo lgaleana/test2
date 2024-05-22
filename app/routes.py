@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from app.templates import templates
 from app.scraping import extract_images
 from app.openai_utils import generate_headline
@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from pydantic import HttpUrl
 import requests
 from bs4 import BeautifulSoup
+from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
 
 # Load environment variables
 load_dotenv()
@@ -48,3 +50,23 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     headlines = [generate_headline(client, text, image) for image in images]
 
     return {"images": images, "headlines": headlines}
+
+@app.post("/download-image")
+def download_image(image_url: HttpUrl, text: str, x: int, y: int):
+    try:
+        response = requests.get(image_url)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    image = Image.open(BytesIO(response.content))
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.load_default()  # You can specify a custom font here
+
+    draw.text((x, y), text, font=font, fill="black")
+
+    img_byte_arr = BytesIO()
+    image.save(img_byte_arr, format='PNG')
+    img_byte_arr.seek(0)
+
+    return StreamingResponse(img_byte_arr, media_type="image/png", headers={"Content-Disposition": "attachment; filename=overlayed_image.png"})
