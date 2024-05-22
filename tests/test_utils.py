@@ -4,7 +4,7 @@ import os
 from bs4 import BeautifulSoup
 from app.openai_utils import generate_headline
 from app.scraping import extract_images
-from mock_utils import mock_openai_client
+from tests.mock_utils import mock_openai_client
 
 
 def test_generate_headline():
@@ -55,3 +55,4 @@ def test_extract_images_with_limit():
             "http://example.com/image2.jpg"
         ]
         assert extract_images(soup) == expected_images
+

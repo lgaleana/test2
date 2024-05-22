@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from app.main import app
 from app.openai_utils import generate_headline
 from app.scraping import extract_images
-from mock_utils import set_openai_api_key, mock_openai_client
+from tests.mock_utils import set_openai_api_key, mock_openai_client
 
 client = TestClient(app)
 

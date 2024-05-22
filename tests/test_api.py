@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch
 import requests
 from app.main import app
-from mock_utils import mock_openai_client
+from tests.mock_utils import mock_openai_client
 
 client = TestClient(app)
 
