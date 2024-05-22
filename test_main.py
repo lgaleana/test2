@@ -4,7 +4,7 @@ from unittest.mock import patch
 import requests
 import os
 from bs4 import BeautifulSoup
-from app.main import app
+from app.routes import app
 from app.openai_utils import generate_headline
 from app.scraping import extract_images
 from test_utils import set_openai_api_key, mock_openai_client
@@ -35,7 +35,7 @@ def test_extract_text_success():
     expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
     expected_headlines = ["Mocked Ad Headline", "Mocked Ad Headline"]
 
-    with patch("requests.get") as mock_get, patch("app.main.OpenAI", return_value=mock_openai_client()):
+    with patch("requests.get") as mock_get, patch("app.routes.OpenAI", return_value=mock_openai_client()):
         mock_get.return_value.status_code = 200
         mock_get.return_value.content = html_content
 
@@ -65,7 +65,7 @@ def test_extract_text_request_exception():
 def test_extract_text_bermuda():
     url = "https://thinkingofbermuda.com"
     
-    with patch("app.main.OpenAI", return_value=mock_openai_client()):
+    with patch("app.routes.OpenAI", return_value=mock_openai_client()):
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
         assert "images" in response.json()
