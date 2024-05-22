@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, StreamingResponse
 from app.templates import templates
 from app.scraping import extract_images
 from app.openai_utils import generate_headline
@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 from pydantic import HttpUrl
 import requests
 from bs4 import BeautifulSoup
+from io import BytesIO
+from PIL import Image, ImageDraw, ImageFont
+import logging
 
 # Load environment variables
 load_dotenv()
@@ -17,6 +20,10 @@ load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 app = APIRouter()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
@@ -48,3 +55,28 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     headlines = [generate_headline(client, text, image) for image in images]
 
     return {"images": images, "headlines": headlines}
+
+@app.get("/download-image")
+def download_image(url: HttpUrl, text: str, x: int, y: int):
+    logger.info(f"Downloading image from URL: {url}")
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        logger.error(f"Failed to download image: {e}")
+        raise HTTPException(status_code=400, detail=str(e))
+
+    try:
+        image = Image.open(BytesIO(response.content))
+        draw = ImageDraw.Draw(image)
+        font = ImageFont.load_default()
+        draw.text((x, y), text, font=font, fill="black")
+
+        img_byte_arr = BytesIO()
+        image.save(img_byte_arr, format='PNG')
+        img_byte_arr.seek(0)
+
+        return StreamingResponse(img_byte_arr, media_type="image/png", headers={"Content-Disposition": "attachment; filename=overlayed_image.png"})
+    except Exception as e:
+        logger.error(f"Failed to process image: {e}")
+        raise HTTPException(status_code=500, detail="Failed to process image")
