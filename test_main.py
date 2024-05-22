@@ -4,7 +4,7 @@ from unittest.mock import patch
 import requests
 import os
 from bs4 import BeautifulSoup
-from app.routes import app
+from app.main import app
 from app.openai_utils import generate_headline
 from app.scraping import extract_images
 from test_utils import set_openai_api_key, mock_openai_client

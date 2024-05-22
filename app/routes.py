@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from app.templates import templates
 from app.scraping import extract_images
 from app.openai_utils import generate_headline
@@ -17,10 +16,7 @@ load_dotenv()
 # Initialize OpenAI API key
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
-app = FastAPI()
-
-# Mount the static files directory
-app.mount("/static", StaticFiles(directory="templates/static"), name="static")
+app = APIRouter()
 
 @app.get("/", response_class=HTMLResponse)
 def read_root(request: Request):
