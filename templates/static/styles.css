@@ -67,3 +67,9 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
+
+.download-button {
+    position: relative;
+    z-index: 10; /* Ensure the button is above the draggable element */
+    margin-top: 10px;
+}
