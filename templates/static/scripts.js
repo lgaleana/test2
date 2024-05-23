@@ -25,6 +25,11 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.classList.add('draggable');
                 container.appendChild(headline);
 
+                const downloadButton = document.createElement('button');
+                downloadButton.textContent = 'Download';
+                downloadButton.addEventListener('click', () => downloadImage(src, data.headlines[index], headline));
+                container.appendChild(downloadButton);
+
                 imageResultDiv.appendChild(container);
             });
 
@@ -56,3 +61,30 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
         imageResultDiv.textContent = `Error: ${error.message}`;
     }
 });
+
+async function downloadImage(imageUrl, text, headlineElement) {
+    const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
+    const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
+
+    const response = await fetch('/download-image', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ image_url: imageUrl, text: text, x: x, y: y })
+    });
+
+    if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'overlayed_image.png';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    } else {
+        console.error('Failed to download image');
+    }
+}
