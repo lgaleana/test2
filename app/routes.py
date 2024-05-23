@@ -59,8 +59,12 @@ class DownloadImageRequest(BaseModel):
 
 @app.post("/download-image")
 def download_image(request: DownloadImageRequest):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+        "Accept": "*/*",
+    }
     try:
-        response = requests.get(request.image_url)
+        response = requests.get(request.image_url, headers=headers)
         response.raise_for_status()
     except requests.RequestException as e:
         raise HTTPException(status_code=400, detail=str(e))
