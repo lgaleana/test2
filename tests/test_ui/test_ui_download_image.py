@@ -26,6 +26,9 @@ def test_ui_download_image(browser):
         body="mocked_image_content"
     ))
 
+    # Ensure the "Download" button is clickable
+    page.wait_for_selector("button:has-text('Download')")
+
     # Click the download button
     with page.expect_download() as download_info:
         page.click("button:has-text('Download')")

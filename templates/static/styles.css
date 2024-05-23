@@ -73,5 +73,15 @@ button:hover {
     position: absolute;
     bottom: 10px; /* Adjust as needed */
     right: 10px; /* Adjust as needed */
-    z-index: 2; /* Ensure download button is above the draggable element */
+    z-index: 3; /* Ensure download button is above the draggable element */
+    background-color: #28a745; /* Green background */
+    color: white; /* White text */
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.download-button:hover {
+    background-color: #218838; /* Darker green on hover */
 }

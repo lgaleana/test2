@@ -27,6 +27,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
 
                 const downloadButton = document.createElement('button');
                 downloadButton.textContent = 'Download';
+                downloadButton.classList.add('download-button');
                 downloadButton.addEventListener('click', () => downloadImage(src, headline.textContent, headline));
                 container.appendChild(downloadButton);
 
