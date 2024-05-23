@@ -66,19 +66,12 @@ async function downloadImage(imageUrl, text, headlineElement) {
     const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
 
-    const payload = {
-        image_url: imageUrl,
-        text: text,
-        x: x,
-        y: y
-    };
-
     const response = await fetch('/download-image', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ image_url: imageUrl, text: text, x: x, y: y })
     });
 
     if (response.ok) {
@@ -92,7 +85,6 @@ async function downloadImage(imageUrl, text, headlineElement) {
         a.click();
         window.URL.revokeObjectURL(url);
     } else {
-        const errorData = await response.json();
-        console.error('Failed to download image:', errorData.detail);
+        console.error('Failed to download image');
     }
 }
