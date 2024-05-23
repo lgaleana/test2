@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_drag_and_drop_functionality(browser):
     page = browser.new_page()
 
