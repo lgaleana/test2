@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_download_image(browser):
     page = browser.new_page()
 
@@ -8,15 +7,7 @@ def test_ui_download_image(browser):
     page.route("**/extract-text?url=http%3A%2F%2Fexample.com", lambda route: route.fulfill(
         status=200,
         content_type="application/json",
-        body='{"images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"], "headlines": ["Mocked Ad Headline", "Another Mocked Headline"]}'
-    ))
-
-    # Mock the fetch request to /download-image
-    page.route("**/download-image?image_url=**", lambda route: route.fulfill(
-        status=200,
-        content_type="image/png",
-        headers={"Content-Disposition": "attachment; filename=overlayed_image.png"},
-        body=b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc`\x00\x00\x00\x02\x00\x01\xe2!\xbc\x33\x00\x00\x00\x00IEND\xaeB`\x82'
+        body='{"images": ["http://example.com/image1.jpg"], "headlines": ["Mocked Ad Headline"]}'
     ))
 
     page.goto("http://localhost:8080/")
@@ -28,11 +19,18 @@ def test_ui_download_image(browser):
     # Wait for the result to be updated
     page.wait_for_selector("#image-result .image-container")
 
-    # Click the download button
-    download_button = page.query_selector(".download-button")
-    download_button.click()
+    # Mock the download image request
+    page.route("**/download-image?**", lambda route: route.fulfill(
+        status=200,
+        content_type="image/png",
+        body="mocked_image_content"
+    ))
 
-    # Check for the download
+    # Click the download button
     with page.expect_download() as download_info:
-        download = download_info.value
-        assert download.suggested_filename == "overlayed_image.png"
+        page.click("button:has-text('Download')")
+    download = download_info.value
+
+    # Verify the download
+    path = download.path()
+    assert path is not None

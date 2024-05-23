@@ -27,8 +27,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
 
                 const downloadButton = document.createElement('button');
                 downloadButton.textContent = 'Download';
-                downloadButton.classList.add('download-button');
-                downloadButton.addEventListener('click', () => downloadImage(src, data.headlines[index], headline));
+                downloadButton.addEventListener('click', () => downloadImage(src, headline.textContent, headline));
                 container.appendChild(downloadButton);
 
                 imageResultDiv.appendChild(container);
@@ -67,21 +66,25 @@ async function downloadImage(imageUrl, text, headlineElement) {
     const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
 
-    const response = await fetch(`/download-image?image_url=${encodeURIComponent(imageUrl)}&text=${encodeURIComponent(text)}&x=${x}&y=${y}`, {
-        method: 'POST'
-    });
+    try {
+        const response = await fetch(`/download-image?image_url=${encodeURIComponent(imageUrl)}&text=${encodeURIComponent(text)}&x=${x}&y=${y}`, {
+            method: 'POST'
+        });
 
-    if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = 'overlayed_image.png';
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-    } else {
-        alert('Failed to download image');
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'overlayed_image.png';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } else {
+            console.error('Failed to download image');
+        }
+    } catch (error) {
+        console.error('Error:', error);
     }
 }
