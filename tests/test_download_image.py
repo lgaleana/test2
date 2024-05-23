@@ -9,7 +9,7 @@ client = TestClient(app)
 
 
 def mock_requests_get(*args, **kwargs):
-    img = Image.new('RGB', (100, 100), color = (73, 109, 137))
+    img = Image.new('RGB', (100, 100), color=(73, 109, 137))
     img_byte_arr = BytesIO()
     img.save(img_byte_arr, format='PNG')
     img_byte_arr.seek(0)
