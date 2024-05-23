@@ -27,7 +27,10 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
 
                 const downloadButton = document.createElement('button');
                 downloadButton.textContent = 'Download';
-                downloadButton.addEventListener('click', () => downloadImage(src, data.headlines[index], headline));
+                downloadButton.addEventListener('click', () => {
+                    headline.style.pointerEvents = 'none'; // Disable pointer events on the headline
+                    downloadImage(src, data.headlines[index], headline);
+                });
                 container.appendChild(downloadButton);
 
                 imageResultDiv.appendChild(container);
