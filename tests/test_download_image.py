@@ -21,7 +21,7 @@ def mock_requests_get(*args, **kwargs):
 
 @patch('requests.get', side_effect=mock_requests_get)
 def test_download_image(mock_get):
-    response = client.post("/download-image", params={"image_url": "http://example.com/image.png", "text": "Test", "x": 10, "y": 10})
+    response = client.post("/download-image", json={"image_url": "http://example.com/image.png", "text": "Test", "x": 10, "y": 10})
     assert response.status_code == 200
     assert response.headers["Content-Disposition"] == "attachment; filename=overlayed_image.png"
     assert response.headers["Content-Type"] == "image/png"

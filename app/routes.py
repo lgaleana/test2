@@ -6,7 +6,7 @@ from app.openai_utils import generate_headline
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from pydantic import HttpUrl
+from pydantic import HttpUrl, BaseModel
 import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
@@ -51,10 +51,16 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
 
     return {"images": images, "headlines": headlines}
 
+class DownloadImageRequest(BaseModel):
+    image_url: HttpUrl
+    text: str
+    x: int
+    y: int
+
 @app.post("/download-image")
-def download_image(image_url: HttpUrl, text: str, x: int, y: int):
+def download_image(request: DownloadImageRequest):
     try:
-        response = requests.get(image_url)
+        response = requests.get(request.image_url)
         response.raise_for_status()
     except requests.RequestException as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -63,7 +69,7 @@ def download_image(image_url: HttpUrl, text: str, x: int, y: int):
     draw = ImageDraw.Draw(image)
     font = ImageFont.load_default()  # You can specify a custom font here
 
-    draw.text((x, y), text, font=font, fill="black")
+    draw.text((request.x, request.y), request.text, font=font, fill="black")
 
     img_byte_arr = BytesIO()
     image.save(img_byte_arr, format='PNG')
