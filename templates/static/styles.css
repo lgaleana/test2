@@ -67,3 +67,9 @@ button:hover {
     border: 1px solid #ccc;
     border-radius: 3px;
 }
+
+/* Add this to ensure the download button is always on top */
+.image-container button {
+    position: relative;
+    z-index: 1;
+}
