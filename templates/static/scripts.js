@@ -68,13 +68,16 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
 async function downloadImage(imageUrl, text, headlineElement) {
     const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
+    const fontSize = parseInt(document.getElementById('font-size').value) || 20;
+    const textColor = document.getElementById('text-color').value || '#000000';
+    const backgroundColor = document.getElementById('background-color').value || null;
 
     const response = await fetch('/download-image', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ image_url: imageUrl, text: text, x: x, y: y })
+        body: JSON.stringify({ image_url: imageUrl, text: text, x: x, y: y, font_size: fontSize, text_color: textColor, background_color: backgroundColor })
     });
 
     if (response.ok) {

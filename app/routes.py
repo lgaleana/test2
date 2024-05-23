@@ -6,7 +6,8 @@ from app.openai_utils import generate_headline
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from pydantic import HttpUrl, BaseModel
+from pydantic import HttpUrl, BaseModel, Field
+from typing import Optional
 import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
@@ -56,6 +57,9 @@ class DownloadImageRequest(BaseModel):
     text: str
     x: int
     y: int
+    font_size: Optional[int] = Field(20, description="Font size of the text")
+    text_color: Optional[str] = Field("black", description="Color of the text")
+    background_color: Optional[str] = Field(None, description="Background color of the text")
 
 @app.post("/download-image")
 def download_image(request: DownloadImageRequest):
@@ -71,9 +75,20 @@ def download_image(request: DownloadImageRequest):
 
     image = Image.open(BytesIO(response.content))
     draw = ImageDraw.Draw(image)
-    font = ImageFont.load_default()  # You can specify a custom font here
+    
+    # Load the TTF font
+    font_path = "static/Arial.ttf"
+    try:
+        font = ImageFont.truetype(font_path, request.font_size)
+    except IOError:
+        raise HTTPException(status_code=500, detail="Font file not found")
 
-    draw.text((request.x, request.y), request.text, font=font, fill="black")
+    # Draw text with background if specified
+    if request.background_color:
+        text_size = draw.textsize(request.text, font=font)
+        draw.rectangle([request.x, request.y, request.x + text_size[0], request.y + text_size[1]], fill=request.background_color)
+    
+    draw.text((request.x, request.y), request.text, font=font, fill=request.text_color)
 
     img_byte_arr = BytesIO()
     image.save(img_byte_arr, format='PNG')
