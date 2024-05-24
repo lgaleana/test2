@@ -66,8 +66,8 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
 });
 
 async function downloadImage(imageUrl, text, headlineElement) {
-    const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
-    const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
+    const x = Math.round(parseFloat(headlineElement.getAttribute('data-x')) || 0);
+    const y = Math.round(parseFloat(headlineElement.getAttribute('data-y')) || 0);
 
     const response = await fetch('/download-image', {
         method: 'POST',
