@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 from app.main import app
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 client = TestClient(app)
 
@@ -25,3 +25,12 @@ def test_download_image(mock_get):
     assert response.status_code == 200
     assert response.headers["Content-Disposition"] == "attachment; filename=overlayed_image.png"
     assert response.headers["Content-Type"] == "image/png"
+
+    # Verify the image content
+    img = Image.open(BytesIO(response.content))
+    draw = ImageDraw.Draw(img)
+    font_path = "app/static/fonts/Arial.ttf"
+    font_size = 20
+    font = ImageFont.truetype(font_path, font_size)
+    text_bbox = draw.textbbox((10, 10), "Test", font=font)
+    assert text_bbox is not None

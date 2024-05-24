@@ -77,7 +77,11 @@ def download_image(request: DownloadImageRequest):
     font_size = 20  # Adjust the font size as needed
     font = ImageFont.truetype(font_path, font_size)
 
-    draw.text((request.x, request.y), request.text, font=font, fill="black")
+    # Adjust the coordinates to account for any transformations or scaling
+    adjusted_x = request.x
+    adjusted_y = request.y
+
+    draw.text((adjusted_x, adjusted_y), request.text, font=font, fill="black")
 
     img_byte_arr = BytesIO()
     image.save(img_byte_arr, format='PNG')
