@@ -37,9 +37,11 @@ def extract_images(soup: BeautifulSoup) -> list:
             logging.info(f"Image URL: {image_url}, Width: {width}, Height: {height}")
             if width >= MIN_IMAGE_WIDTH and height >= MIN_IMAGE_HEIGHT:
                 images.append(image_url)
-        except requests.RequestException:
+        except requests.RequestException as e:
+            logging.error(f"RequestException for URL {image_url}: {e}")
             continue
-        except Exception:
+        except Exception as e:
+            logging.error(f"Exception for URL {image_url}: {e}")
             continue
 
         if len(images) >= n_images:
