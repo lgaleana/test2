@@ -23,6 +23,8 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 const headline = document.createElement('p');
                 headline.textContent = data.headlines[index];
                 headline.classList.add('draggable');
+                headline.setAttribute('data-x', 10); // Set initial x position
+                headline.setAttribute('data-y', 10); // Set initial y position
                 container.appendChild(headline);
 
                 const downloadButton = document.createElement('button');
