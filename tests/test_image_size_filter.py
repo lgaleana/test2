@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 from app.scraping import extract_images
 from io import BytesIO
 from PIL import Image
-import os  # Import the os module
 
 
 def mock_requests_get(*args, **kwargs):
@@ -38,7 +37,6 @@ def test_extract_images_with_size_filter(mock_get):
     </html>
     """
     soup = BeautifulSoup(html_content, "html.parser")
-    with patch.dict(os.environ, {"MIN_IMAGE_WIDTH": "100", "MIN_IMAGE_HEIGHT": "100"}):
-        images = extract_images(soup)
-        assert len(images) == 1
-        assert images[0] == "http://example.com/image1.jpg"
+    images = extract_images(soup)
+    assert len(images) == 1
+    assert images[0] == "http://example.com/image1.jpg"

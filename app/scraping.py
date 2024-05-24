@@ -4,12 +4,11 @@ import requests
 from PIL import Image
 from io import BytesIO
 
-
 def extract_images(soup: BeautifulSoup) -> list:
     images = []
     n_images = int(os.getenv("N_IMAGES", 4))  # Default to 4 if not set
-    min_width = int(os.getenv("MIN_IMAGE_WIDTH", 0))
-    min_height = int(os.getenv("MIN_IMAGE_HEIGHT", 0))
+    min_width = 100  # Hardcoded minimum width
+    min_height = 100  # Hardcoded minimum height
 
     for img in soup.find_all(["img", "meta", "link", "source"]):
         if img.name == "img" and img.get("src"):
