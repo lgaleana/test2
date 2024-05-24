@@ -71,7 +71,11 @@ def download_image(request: DownloadImageRequest):
 
     image = Image.open(BytesIO(response.content))
     draw = ImageDraw.Draw(image)
-    font = ImageFont.load_default()  # You can specify a custom font here
+    
+    # Load a TrueType font
+    font_path = "app/static/fonts/Arial.ttf"
+    font_size = 20  # Adjust the font size as needed
+    font = ImageFont.truetype(font_path, font_size)
 
     draw.text((request.x, request.y), request.text, font=font, fill="black")
 
