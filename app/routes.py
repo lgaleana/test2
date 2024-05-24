@@ -54,8 +54,8 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
 class DownloadImageRequest(BaseModel):
     image_url: HttpUrl
     text: str
-    x: int = Field(..., description="X coordinate of the text position", example=10)
-    y: int = Field(..., description="Y coordinate of the text position", example=10)
+    x: float = Field(..., description="X coordinate of the text position", example=10.0)
+    y: float = Field(..., description="Y coordinate of the text position", example=10.0)
 
 @app.post("/download-image")
 def download_image(request: DownloadImageRequest):
