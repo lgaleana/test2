@@ -6,7 +6,7 @@ from app.openai_utils import generate_headline
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-from pydantic import HttpUrl, BaseModel
+from pydantic import HttpUrl, BaseModel, Field
 import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
@@ -54,8 +54,8 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
 class DownloadImageRequest(BaseModel):
     image_url: HttpUrl
     text: str
-    x: int
-    y: int
+    x: float = Field(..., description="X coordinate of the text position", example=10.0)
+    y: float = Field(..., description="Y coordinate of the text position", example=10.0)
 
 @app.post("/download-image")
 def download_image(request: DownloadImageRequest):
@@ -77,7 +77,11 @@ def download_image(request: DownloadImageRequest):
     font_size = 20  # Adjust the font size as needed
     font = ImageFont.truetype(font_path, font_size)
 
-    draw.text((request.x, request.y), request.text, font=font, fill="black")
+    # Adjust the coordinates to account for any transformations or scaling
+    adjusted_x = int(request.x)
+    adjusted_y = int(request.y)
+
+    draw.text((adjusted_x, adjusted_y), request.text, font=font, fill="black")
 
     img_byte_arr = BytesIO()
     image.save(img_byte_arr, format='PNG')
