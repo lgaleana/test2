@@ -5,8 +5,8 @@ from PIL import Image
 from io import BytesIO
 
 # Global variables for minimum width and height
-MIN_IMAGE_WIDTH = 100
-MIN_IMAGE_HEIGHT = 100
+MIN_IMAGE_WIDTH = 300
+MIN_IMAGE_HEIGHT = 250
 
 def extract_images(soup: BeautifulSoup) -> list:
     images = []
