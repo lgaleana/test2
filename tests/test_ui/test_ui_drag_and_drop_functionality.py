@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_drag_and_drop_functionality(browser):
     page = browser.new_page()
 
@@ -33,9 +32,12 @@ def test_ui_drag_and_drop_functionality(browser):
     # Test drag-and-drop functionality
     for headline in page.query_selector_all("#image-result p.draggable"):
         box = headline.bounding_box()
+        print(f"Initial position: {box}")
         page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
         page.mouse.down()
-        page.mouse.move(box['x'] + 100, box['y'] + 100)
+        page.mouse.move(box['x'] + 100, box['y'] + 100, steps=10)
         page.mouse.up()
+        page.wait_for_timeout(500)  # Add a delay to allow the drag-and-drop action to complete
         new_box = headline.bounding_box()
+        print(f"New position: {new_box}")
         assert new_box['x'] != box['x'] or new_box['y'] != box['y']  # Ensure the position has changed
