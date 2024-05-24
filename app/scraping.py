@@ -3,6 +3,10 @@ import os
 import requests
 from PIL import Image
 from io import BytesIO
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 # Global variables for minimum width and height
 MIN_IMAGE_WIDTH = 300
@@ -30,6 +34,7 @@ def extract_images(soup: BeautifulSoup) -> list:
             response.raise_for_status()
             image = Image.open(BytesIO(response.content))
             width, height = image.size
+            logging.info(f"Image URL: {image_url}, Width: {width}, Height: {height}")
             if width >= MIN_IMAGE_WIDTH and height >= MIN_IMAGE_HEIGHT:
                 images.append(image_url)
         except requests.RequestException:
