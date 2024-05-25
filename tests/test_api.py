@@ -1,6 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
+import requests  # Import the requests module
 from app.main import app
 from tests.mock_utils import mock_openai_client
 from io import BytesIO
