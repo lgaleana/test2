@@ -19,7 +19,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 container.classList.add('image-container');
 
                 const img = document.createElement('img');
-                img.src = src;
+                img.src = `/fetch-image?url=${encodeURIComponent(src)}`;
                 img.alt = 'Extracted image';
                 img.style.maxWidth = '100%';
                 container.appendChild(img);
@@ -34,7 +34,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 const cropButton = document.createElement('button');
                 cropButton.textContent = 'Crop';
                 cropButton.addEventListener('click', () => {
-                    cropImage.src = src;
+                    cropImage.src = `/fetch-image?url=${encodeURIComponent(src)}`;
                     cropContainer.style.display = 'block';
                     cropper = new Cropper(cropImage, {
                         aspectRatio: 16 / 9,

@@ -88,3 +88,17 @@ def download_image(request: DownloadImageRequest):
     img_byte_arr.seek(0)
 
     return StreamingResponse(img_byte_arr, media_type="image/png", headers={"Content-Disposition": "attachment; filename=overlayed_image.png"})
+
+@app.get("/fetch-image")
+def fetch_image(url: HttpUrl):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+        "Accept": "*/*",
+    }
+    try:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    return StreamingResponse(BytesIO(response.content), media_type=response.headers['Content-Type'])
