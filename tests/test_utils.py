@@ -2,14 +2,13 @@ import pytest
 from unittest.mock import patch, MagicMock
 from bs4 import BeautifulSoup
 from app.scraping import extract_images
-import requests
 from PIL import Image
 from io import BytesIO
-import os  # Import the os module
+import os
 
 
 def mock_requests_get(*args, **kwargs):
-    img = Image.new('RGB', (100, 100), color = (73, 109, 137))
+    img = Image.new('RGB', (300, 300), color=(73, 109, 137))  # Ensure the image meets the size criteria
     img_byte_arr = BytesIO()
     img.save(img_byte_arr, format='PNG')
     img_byte_arr.seek(0)
@@ -49,7 +48,6 @@ def test_extract_images_with_size_filter_exclude(mock_get):
     </html>
     """
     soup = BeautifulSoup(html_content, "html.parser")
-    with patch.dict(os.environ, {"MIN_IMAGE_WIDTH": "200", "MIN_IMAGE_HEIGHT": "200"}):
+    with patch.dict(os.environ, {"MIN_IMAGE_WIDTH": "400", "MIN_IMAGE_HEIGHT": "400"}):  # Ensure the size criteria exclude the images
         expected_images = []
         assert extract_images(soup) == expected_images
-

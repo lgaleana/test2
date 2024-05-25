@@ -4,12 +4,13 @@ import requests
 from PIL import Image
 from io import BytesIO
 
+# Define global variables for minimum image dimensions
+MIN_IMAGE_WIDTH = int(os.getenv("MIN_IMAGE_WIDTH", 300))
+MIN_IMAGE_HEIGHT = int(os.getenv("MIN_IMAGE_HEIGHT", 250))
 
 def extract_images(soup: BeautifulSoup) -> list:
     images = []
     n_images = int(os.getenv("N_IMAGES", 4))  # Default to 4 if not set
-    min_width = int(os.getenv("MIN_IMAGE_WIDTH", 0))
-    min_height = int(os.getenv("MIN_IMAGE_HEIGHT", 0))
 
     for img in soup.find_all(["img", "meta", "link", "source"]):
         img_url = None
@@ -27,7 +28,7 @@ def extract_images(soup: BeautifulSoup) -> list:
                 response = requests.get(img_url)
                 response.raise_for_status()
                 image = Image.open(BytesIO(response.content))
-                if image.width >= min_width and image.height >= min_height:
+                if image.width >= MIN_IMAGE_WIDTH and image.height >= MIN_IMAGE_HEIGHT:
                     images.append(img_url)
             except requests.RequestException:
                 continue
