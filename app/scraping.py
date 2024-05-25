@@ -1,12 +1,12 @@
 from bs4 import BeautifulSoup
-import os
+import os  # Add this import
 import requests
 from PIL import Image
 from io import BytesIO
 import logging
 
-# Define global variables for allowed image dimensions
-ALLOWED_IMAGE_SIZES = os.getenv("ALLOWED_IMAGE_SIZES", "300x250,728x90,160x600,300x600").split(',')
+# Define allowed image dimensions
+ALLOWED_IMAGE_SIZES = ["300x250", "728x90", "160x600", "300x600"]
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

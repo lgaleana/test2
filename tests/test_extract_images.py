@@ -84,12 +84,11 @@ def test_extract_images_with_allowed_sizes(mock_get):
     </html>
     """
     soup = BeautifulSoup(html_content, "html.parser")
-    with patch.dict(os.environ, {"ALLOWED_IMAGE_SIZES": "300x250,728x90,160x600,300x600"}):
-        expected_images = [
-            "http://example.com/image1.jpg",
-            "http://example.com/image2.jpg"
-        ]
-        assert extract_images(soup) == expected_images
+    expected_images = [
+        "http://example.com/image1.jpg",
+        "http://example.com/image2.jpg"
+    ]
+    assert extract_images(soup) == expected_images
 
 
 def mock_requests_get_small_image(*args, **kwargs):
@@ -113,6 +112,5 @@ def test_extract_images_with_size_filter_exclude(mock_get):
     </html>
     """
     soup = BeautifulSoup(html_content, "html.parser")
-    with patch.dict(os.environ, {"ALLOWED_IMAGE_SIZES": "300x250,728x90,160x600,300x600"}):  # Ensure the size criteria exclude the images
-        expected_images = []
-        assert extract_images(soup) == expected_images
+    expected_images = []
+    assert extract_images(soup) == expected_images
