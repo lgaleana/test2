@@ -8,6 +8,7 @@ from io import BytesIO
 MIN_IMAGE_WIDTH = 100
 MIN_IMAGE_HEIGHT = 100
 
+
 def extract_images(soup: BeautifulSoup) -> list:
     images = []
     n_images = int(os.getenv("N_IMAGES", 4))  # Default to 4 if not set
