@@ -89,6 +89,9 @@ async function downloadImage(imageUrl, text, headlineElement) {
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
+
+        // Re-enable pointer events on the headline after download
+        headlineElement.style.pointerEvents = 'auto';
     } else {
         alert('Failed to download image');
     }
