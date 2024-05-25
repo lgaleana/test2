@@ -3,10 +3,15 @@ import os
 import requests
 from PIL import Image
 from io import BytesIO
+import logging
 
 # Define global variables for minimum image dimensions
 MIN_IMAGE_WIDTH = int(os.getenv("MIN_IMAGE_WIDTH", 300))
 MIN_IMAGE_HEIGHT = int(os.getenv("MIN_IMAGE_HEIGHT", 250))
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def extract_images(soup: BeautifulSoup) -> list:
     images = []
@@ -30,9 +35,11 @@ def extract_images(soup: BeautifulSoup) -> list:
                 image = Image.open(BytesIO(response.content))
                 if image.width >= MIN_IMAGE_WIDTH and image.height >= MIN_IMAGE_HEIGHT:
                     images.append(img_url)
-            except requests.RequestException:
+            except requests.RequestException as e:
+                logger.error(f"RequestException for URL {img_url}: {e}")
                 continue
-            except IOError:
+            except IOError as e:
+                logger.error(f"IOError for URL {img_url}: {e}")
                 continue
 
         if len(images) >= n_images:
