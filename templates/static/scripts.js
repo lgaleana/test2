@@ -6,6 +6,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
     const cropImage = document.getElementById('crop-image');
     const cropButton = document.getElementById('crop-button');
     let cropper;
+    let currentImageContainer; // To keep track of the current image container being cropped
 
     imageResultDiv.innerHTML = ''; // Clear previous images
 
@@ -40,6 +41,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                         aspectRatio: 16 / 9,
                         viewMode: 1,
                     });
+                    currentImageContainer = container; // Set the current image container
                 });
                 container.appendChild(cropButton);
 
@@ -92,10 +94,9 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
         croppedImage.alt = 'Cropped image';
         croppedImage.style.maxWidth = '100%';
 
-        // Replace the original image with the cropped image
-        const originalImageContainer = cropContainer.previousElementSibling;
-        originalImageContainer.innerHTML = '';
-        originalImageContainer.appendChild(croppedImage);
+        // Replace the original image with the cropped image in the current image container
+        const originalImage = currentImageContainer.querySelector('img');
+        originalImage.src = croppedImageURL;
 
         cropContainer.style.display = 'none';
         cropper.destroy();

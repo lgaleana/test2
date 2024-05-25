@@ -32,4 +32,8 @@ def test_ui_crop_image(browser):
     crop_image = page.query_selector("#image-result .image-container img")
     assert crop_image is not None
 
+    # Ensure the original images are still present
+    original_images = page.query_selector_all("#image-result .image-container img")
+    assert len(original_images) == 1  # Ensure only one image is present
+
     page.close()
