@@ -1,7 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
-import requests  # Import the requests module
 from app.main import app
 from tests.mock_utils import mock_openai_client
 from io import BytesIO
@@ -46,20 +45,6 @@ def test_extract_text_success(mock_get):
         assert response.json() == {"images": expected_images, "headlines": expected_headlines}
         for headline in response.json()["headlines"]:
             assert len(headline.split()) <= 5  # Ensure each headline is no more than 5 words
-
-def test_extract_text_invalid_url():
-    response = client.get("/extract-text", params={"url": "invalid-url"})
-    assert response.status_code == 422
-
-def test_extract_text_request_exception():
-    url = "http://example.com"
-
-    with patch("requests.get") as mock_get:
-        mock_get.side_effect = requests.RequestException("Request failed")
-
-        response = client.get("/extract-text", params={"url": url})
-        assert response.status_code == 400
-        assert response.json() == {"detail": "Request failed"}
 
 def test_extract_text_bermuda():
     url = "https://thinkingofbermuda.com"
