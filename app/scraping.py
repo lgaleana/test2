@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-import os  # Add this import
+import os
 import requests
 from PIL import Image
 from io import BytesIO
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def is_allowed_size(width, height):
+def is_allowed_size(width: int, height: int) -> bool:
     for size in ALLOWED_IMAGE_SIZES:
         allowed_width, allowed_height = map(int, size.split('x'))
         if width >= allowed_width and height >= allowed_height:
