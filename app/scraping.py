@@ -17,6 +17,11 @@ def extract_images(soup: BeautifulSoup) -> list:
     images = []
     n_images = int(os.getenv("N_IMAGES", 4))  # Default to 4 if not set
 
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    }
+
     for img in soup.find_all(["img", "meta", "link", "source"]):
         img_url = None
         if img.name == "img" and img.get("src"):
@@ -30,7 +35,7 @@ def extract_images(soup: BeautifulSoup) -> list:
 
         if img_url:
             try:
-                response = requests.get(img_url)
+                response = requests.get(img_url, headers=headers)
                 response.raise_for_status()
                 image = Image.open(BytesIO(response.content))
                 if image.width >= MIN_IMAGE_WIDTH and image.height >= MIN_IMAGE_HEIGHT:
