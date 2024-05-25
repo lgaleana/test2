@@ -5,13 +5,20 @@ from PIL import Image
 from io import BytesIO
 import logging
 
-# Define global variables for minimum image dimensions
-MIN_IMAGE_WIDTH = int(os.getenv("MIN_IMAGE_WIDTH", 300))
-MIN_IMAGE_HEIGHT = int(os.getenv("MIN_IMAGE_HEIGHT", 250))
+# Define allowed image dimensions
+ALLOWED_IMAGE_SIZES = ["300x250", "728x90", "160x600", "300x600"]
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def is_allowed_size(width: int, height: int) -> bool:
+    for size in ALLOWED_IMAGE_SIZES:
+        allowed_width, allowed_height = map(int, size.split('x'))
+        if width >= allowed_width and height >= allowed_height:
+            return True
+    return False
 
 
 def extract_images(soup: BeautifulSoup) -> list:
@@ -39,7 +46,7 @@ def extract_images(soup: BeautifulSoup) -> list:
                 response = requests.get(img_url, headers=headers)
                 response.raise_for_status()
                 image = Image.open(BytesIO(response.content))
-                if image.width >= MIN_IMAGE_WIDTH and image.height >= MIN_IMAGE_HEIGHT:
+                if is_allowed_size(image.width, image.height):
                     images.append(img_url)
             except requests.RequestException as e:
                 logger.error(f"RequestException for URL {img_url}: {e}")
