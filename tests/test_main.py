@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 import requests  # Import the requests module
+import os  # Import the os module
 from app.main import app
 from app.openai_utils import generate_headline
 from app.scraping import extract_images
@@ -133,3 +134,4 @@ def test_extract_images_with_limit(mock_get):
             "http://example.com/image2.jpg"
         ]
         assert extract_images(soup) == expected_images
+
