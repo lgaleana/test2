@@ -29,7 +29,7 @@ def test_ui_crop_image(browser):
     page.click("#crop-button")
 
     # Verify the cropped image
-    crop_image = page.query_selector("#crop-image")
+    crop_image = page.query_selector("#image-result .image-container img")
     assert crop_image is not None
 
     page.close()

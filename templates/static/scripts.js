@@ -85,7 +85,18 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
     cropButton.addEventListener('click', () => {
         const croppedCanvas = cropper.getCroppedCanvas();
         const croppedImageURL = croppedCanvas.toDataURL('image/png');
-        cropImage.src = croppedImageURL;
+        
+        // Display the cropped image
+        const croppedImage = document.createElement('img');
+        croppedImage.src = croppedImageURL;
+        croppedImage.alt = 'Cropped image';
+        croppedImage.style.maxWidth = '100%';
+
+        // Replace the original image with the cropped image
+        const originalImageContainer = cropContainer.previousElementSibling;
+        originalImageContainer.innerHTML = '';
+        originalImageContainer.appendChild(croppedImage);
+
         cropContainer.style.display = 'none';
         cropper.destroy();
     });
