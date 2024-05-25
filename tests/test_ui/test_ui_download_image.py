@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_download_image(browser):
     page = browser.new_page()
 
@@ -20,6 +19,15 @@ def test_ui_download_image(browser):
     # Wait for the result to be updated
     page.wait_for_selector("#image-result .image-container")
 
+    # Log the inner HTML of the image result container
+    image_result_html = page.inner_html("#image-result")
+    print(f"Image Result HTML: {image_result_html}")
+
+    # Verify the presence of buttons
+    buttons = page.query_selector_all("#image-result .image-container button")
+    for i, button in enumerate(buttons):
+        print(f"Button {i + 1} text: {button.text_content()}")
+
     # Mock the download request
     page.route("**/download-image", lambda route: route.fulfill(
         status=200,
@@ -28,9 +36,12 @@ def test_ui_download_image(browser):
         body=b""
     ))
 
-    # Click the download button
-    page.click("#image-result .image-container button")
+    # Click the download button for the first image
+    with page.expect_download() as download_info:
+        page.click("#image-result .image-container:nth-of-type(1) button:nth-of-type(2)")  # Ensure the correct button is clicked
+    download = download_info.value
 
     # Verify the download
-    download = page.wait_for_event("download")
     assert download.suggested_filename == "overlayed_image.png"
+
+    page.close()

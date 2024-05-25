@@ -2,7 +2,11 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
     event.preventDefault();
     const urlInput = document.getElementById('url-input').value;
     const imageResultDiv = document.getElementById('image-result');
-    
+    const cropContainer = document.getElementById('crop-container');
+    const cropImage = document.getElementById('crop-image');
+    const cropButton = document.getElementById('crop-button');
+    let cropper;
+
     imageResultDiv.innerHTML = ''; // Clear previous images
 
     try {
@@ -26,6 +30,18 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.setAttribute('data-x', 10); // Set initial x position
                 headline.setAttribute('data-y', 10); // Set initial y position
                 container.appendChild(headline);
+
+                const cropButton = document.createElement('button');
+                cropButton.textContent = 'Crop';
+                cropButton.addEventListener('click', () => {
+                    cropImage.src = src;
+                    cropContainer.style.display = 'block';
+                    cropper = new Cropper(cropImage, {
+                        aspectRatio: 16 / 9,
+                        viewMode: 1,
+                    });
+                });
+                container.appendChild(cropButton);
 
                 const downloadButton = document.createElement('button');
                 downloadButton.textContent = 'Download';
@@ -65,6 +81,14 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
     } catch (error) {
         imageResultDiv.textContent = `Error: ${error.message}`;
     }
+
+    cropButton.addEventListener('click', () => {
+        const croppedCanvas = cropper.getCroppedCanvas();
+        const croppedImageURL = croppedCanvas.toDataURL('image/png');
+        cropImage.src = croppedImageURL;
+        cropContainer.style.display = 'none';
+        cropper.destroy();
+    });
 });
 
 async function downloadImage(imageUrl, text, headlineElement) {

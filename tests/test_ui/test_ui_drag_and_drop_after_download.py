@@ -27,11 +27,12 @@ def test_ui_drag_and_drop_after_download(browser):
         body=b""
     ))
 
-    # Click the download button
-    page.click("#image-result .image-container button")
+    # Click the download button for the first image
+    with page.expect_download() as download_info:
+        page.click("#image-result .image-container:nth-of-type(1) button:nth-of-type(2)")  # Ensure the correct button is clicked
+    download = download_info.value
 
     # Verify the download
-    download = page.wait_for_event("download")
     assert download.suggested_filename == "overlayed_image.png"
 
     # Mock the bounding box data

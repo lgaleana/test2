@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Text and Image Extractor</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 </head>
 <body>
     <h1>Text and Image Extractor</h1>
@@ -17,6 +19,10 @@
     <div id="result">
         <div id="text-result"></div>
         <div id="image-result"></div>
+        <div id="crop-container" style="display: none;">
+            <img id="crop-image" src="" alt="Image to crop">
+            <button id="crop-button">Crop</button>
+        </div>
     </div>
     <script src="/static/scripts.js"></script>
 </body>
