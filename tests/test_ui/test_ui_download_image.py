@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_download_image(browser):
     page = browser.new_page()
 
