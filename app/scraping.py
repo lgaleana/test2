@@ -13,6 +13,7 @@ MIN_IMAGE_HEIGHT = int(os.getenv("MIN_IMAGE_HEIGHT", 250))
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 def extract_images(soup: BeautifulSoup) -> list:
     images = []
     n_images = int(os.getenv("N_IMAGES", 4))  # Default to 4 if not set
