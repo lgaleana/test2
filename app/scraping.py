@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def is_allowed_size(width, height):
     for size in ALLOWED_IMAGE_SIZES:
         allowed_width, allowed_height = map(int, size.split('x'))
-        if width == allowed_width and height == allowed_height:
+        if width >= allowed_width and height >= allowed_height:
             return True
     return False
 

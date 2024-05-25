@@ -10,7 +10,7 @@ import os
 def mock_requests_get_image(*args, **kwargs):
     url = str(args[0])  # Convert the URL to a string
     if url.startswith("http://example.com/image"):
-        img = Image.new('RGB', (300, 250), color=(73, 109, 137))  # Ensure the image meets the size criteria
+        img = Image.new('RGB', (800, 600), color=(73, 109, 137))  # Ensure the image meets the size criteria
         img_byte_arr = BytesIO()
         img.save(img_byte_arr, format='PNG')
         img_byte_arr.seek(0)
