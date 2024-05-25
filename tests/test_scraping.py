@@ -16,9 +16,9 @@ def mock_requests_get(*args, **kwargs):
             pass
 
     if args[0] == "http://example.com/image1.jpg":
-        img = Image.new('RGB', (150, 150), color = (73, 109, 137))
+        img = Image.new('RGB', (300, 250), color=(73, 109, 137))  # Updated size to meet new requirements
     else:
-        img = Image.new('RGB', (50, 50), color = (73, 109, 137))
+        img = Image.new('RGB', (50, 50), color=(73, 109, 137))
     
     img_byte_arr = BytesIO()
     img.save(img_byte_arr, format='JPEG')

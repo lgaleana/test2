@@ -6,8 +6,8 @@ from io import BytesIO
 import logging
 
 # Define global variables for minimum image dimensions
-MIN_IMAGE_WIDTH = 100
-MIN_IMAGE_HEIGHT = 100
+MIN_IMAGE_WIDTH = 300
+MIN_IMAGE_HEIGHT = 250
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
