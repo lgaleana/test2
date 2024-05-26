@@ -41,5 +41,5 @@ def test_download_image(mock_get):
     font_path = "app/static/fonts/Arial.ttf"
     font_size = 20
     font = ImageFont.truetype(font_path, font_size)
-    text_bbox = draw.textbbox((10, 10), "Test", font=font)
+    text_bbox = draw.textbbox((10, 20), "Test", font=font)  # Adjusted y-coordinate
     assert text_bbox is not None

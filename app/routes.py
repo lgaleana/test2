@@ -75,6 +75,10 @@ async def download_image(
     adjusted_x = int(x)
     adjusted_y = int(y)
 
+    # Apply any necessary adjustments to the coordinates
+    # For example, if the y-coordinate is off, adjust it here
+    adjusted_y += 10  # Adjust the y-coordinate by 10 pixels (example adjustment)
+
     draw.text((adjusted_x, adjusted_y), text, font=font, fill="black")
 
     img_byte_arr = BytesIO()
