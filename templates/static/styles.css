@@ -62,10 +62,10 @@ button:hover {
     left: 10px; /* Adjust as needed */
     cursor: move;
     user-select: none;
-    padding: 5px;
     border: 1px solid #ccc;
     border-radius: 3px;
     background-color: transparent !important; /* Ensure no background */
+    padding: 0 !important; /* Remove padding */
 }
 
 .draggable[contenteditable="true"] {
