@@ -71,6 +71,28 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                     headline.style.color = colorInput.value;
                 });
 
+                // Add font type selection
+                const fontTypeLabel = document.createElement('label');
+                fontTypeLabel.setAttribute('for', 'font-type');
+                fontTypeLabel.textContent = 'Font Type:';
+                container.appendChild(fontTypeLabel);
+
+                const fontTypeInput = document.createElement('select');
+                fontTypeInput.setAttribute('id', 'font-type');
+                fontTypeInput.setAttribute('name', 'font-type');
+                ['Arial', 'Courier_New', 'Verdana'].forEach(font => {
+                    const option = document.createElement('option');
+                    option.value = font;
+                    option.textContent = font.replace('_', ' ');
+                    fontTypeInput.appendChild(option);
+                });
+                container.appendChild(fontTypeInput);
+
+                // Add event listener to update font type in real-time
+                fontTypeInput.addEventListener('change', () => {
+                    headline.style.fontFamily = fontTypeInput.value.replace('_', ' ');
+                });
+
                 const cropButton = document.createElement('button');
                 cropButton.textContent = 'Crop';
                 cropButton.addEventListener('click', () => {
@@ -89,7 +111,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 downloadButton.addEventListener('click', () => {
                     headline.style.pointerEvents = 'none'; // Disable pointer events on the headline
                     const imageElement = container.querySelector('img');
-                    downloadImage(imageElement, headline.textContent, headline, fontSizeInput.value, colorInput.value);
+                    downloadImage(imageElement, headline.textContent, headline, fontSizeInput.value, colorInput.value, fontTypeInput.value);
                 });
                 container.appendChild(downloadButton);
 
