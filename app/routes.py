@@ -84,6 +84,10 @@ async def download_image(
     logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}")
     logger.info(f"Image size: {image.size}")
 
+    # Log the text bounding box
+    text_bbox = draw.textbbox((adjusted_x, adjusted_y), text, font=font)
+    logger.info(f"Text bounding box: {text_bbox}")
+
     draw.text((adjusted_x, adjusted_y), text, font=font, fill="black")
 
     img_byte_arr = BytesIO()

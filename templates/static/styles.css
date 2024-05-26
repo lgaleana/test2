@@ -1,112 +1,116 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+ font-family: Arial, sans-serif;
+ margin: 20px;
 }
 
 h1 {
-    color: #333;
+ color: #333;
 }
 
 form {
-    margin-bottom: 20px;
+ margin-bottom: 20px;
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
+ display: block;
+ margin-bottom: 5px;
 }
 
 input[type="text"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+ width: 100%;
+ padding: 8px;
+ margin-bottom: 10px;
+ border: 1px solid #ccc;
+ border-radius: 4px;
 }
 
 button {
-    padding: 10px 15px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+ padding: 10px 15px;
+ background-color: #007BFF;
+ color: white;
+ border: none;
+ border-radius: 4px;
+ cursor: pointer;
 }
 
 button:hover {
-    background-color: #0056b3;
+ background-color: #0056b3;
 }
 
 #result {
-    white-space: pre-wrap;
-    background-color: #f4f4f4;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+ white-space: pre-wrap;
+ background-color: #f4f4f4;
+ padding: 10px;
+ border: 1px solid #ddd;
+ border-radius: 4px;
 }
 
 .image-container {
-    position: relative;
-    display: inline-block;
-    margin: 10px 0;
+ position: relative;
+ display: inline-block;
+ margin: 10px 0;
 }
 
 .image-container img {
-    display: block;
-    max-width: 100%;
+ display: block;
+ max-width: 100%;
 }
 
 .draggable {
-    position: absolute;
-    top: 10px; /* Adjust as needed */
-    left: 10px; /* Adjust as needed */
-    cursor: move;
-    user-select: none;
-    border: none !important; /* Remove border */
-    border-radius: 3px;
-    background-color: transparent !important; /* Ensure no background */
-    padding: 0 !important; /* Remove padding */
-    margin: 0 !important; /* Remove margin */
-    font-family: Arial, sans-serif; /* Ensure the same font is used */
+ position: absolute;
+ top: 10px; /* Adjust as needed */
+ left: 10px; /* Adjust as needed */
+ cursor: move;
+ user-select: none;
+ border: none !important; /* Remove border */
+ border-radius: 3px;
+ background-color: transparent !important; /* Ensure no background */
+ padding: 0 !important; /* Remove padding */
+ margin: 0 !important; /* Remove margin */
+ font-family: Arial, sans-serif; /* Ensure the same font is used */
+ line-height: normal; /* Ensure consistent line height */
+ letter-spacing: normal; /* Ensure consistent letter spacing */
 }
 
 .draggable[contenteditable="true"] {
-    border: none !important; /* Remove border */
-    padding: 5px;
-    margin: 0 !important; /* Remove margin */
-    font-family: Arial, sans-serif; /* Ensure the same font is used */
+ border: none !important; /* Remove border */
+ padding: 5px;
+ margin: 0 !important; /* Remove margin */
+ font-family: Arial, sans-serif; /* Ensure the same font is used */
+ line-height: normal; /* Ensure consistent line height */
+ letter-spacing: normal; /* Ensure consistent letter spacing */
 }
 
 .image-container button {
-    margin-top: 10px;
-    z-index: 1; /* Ensure the button is above the draggable element */
-    position: relative; /* Ensure the button is positioned correctly */
-    display: block; /* Ensure buttons are displayed in a block format to avoid overlap */
+ margin-top: 10px;
+ z-index: 1; /* Ensure the button is above the draggable element */
+ position: relative; /* Ensure the button is positioned correctly */
+ display: block; /* Ensure buttons are displayed in a block format to avoid overlap */
 }
 
 #crop-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
+ position: relative;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ margin-top: 20px;
 }
 
 #crop-image {
-    max-width: 100%;
-    max-height: 400px;
+ max-width: 100%;
+ max-height: 400px;
 }
 
 #crop-button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+ margin-top: 10px;
+ padding: 10px 15px;
+ background-color: #28a745;
+ color: white;
+ border: none;
+ border-radius: 4px;
+ cursor: pointer;
 }
 
 #crop-button:hover {
-    background-color: #218838;
+ background-color: #218838;
 }
