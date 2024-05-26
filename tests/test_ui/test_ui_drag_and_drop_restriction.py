@@ -1,5 +1,6 @@
 import pytest
-
+from io import BytesIO
+from PIL import Image
 
 def test_ui_drag_and_drop_restriction(browser):
     page = browser.new_page()
@@ -10,6 +11,21 @@ def test_ui_drag_and_drop_restriction(browser):
         content_type="application/json",
         body='{"images": ["http://example.com/image1.jpg", "http://example.com/image2.jpg"], "headlines": ["Mocked Ad Headline", "Another Mocked Headline"]}'
     ))
+
+    # Mock the fetch request to /fetch-image
+    def mock_fetch_image(route):
+        img = Image.new('RGB', (800, 600), color=(73, 109, 137))
+        img_byte_arr = BytesIO()
+        img.save(img_byte_arr, format='PNG')
+        img_byte_arr.seek(0)
+        route.fulfill(
+            status=200,
+            content_type="image/png",
+            body=img_byte_arr.read()
+        )
+
+    page.route("**/fetch-image?url=http%3A%2F%2Fexample.com%2Fimage1.jpg", mock_fetch_image)
+    page.route("**/fetch-image?url=http%3A%2F%2Fexample.com%2Fimage2.jpg", mock_fetch_image)
 
     page.goto("http://localhost:8080/")
 
@@ -46,5 +62,11 @@ def test_ui_drag_and_drop_restriction(browser):
             return { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
         }''', headline)
 
+        # Log the bounding box data
+        print(f"Container box: {container_box}")
+        print(f"New box: {new_box}")
+
         assert container_box['left'] <= new_box['x'] <= container_box['left'] + container_box['width'] - new_box['width']
         assert container_box['top'] <= new_box['y'] <= container_box['top'] + container_box['height'] - new_box['height']
+
+    page.close()
