@@ -30,6 +30,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.classList.add('draggable');
                 headline.setAttribute('data-x', 10); // Set initial x position
                 headline.setAttribute('data-y', 10); // Set initial y position
+                headline.setAttribute('contenteditable', 'true'); // Make the text editable
                 container.appendChild(headline);
 
                 const cropButton = document.createElement('button');
@@ -50,11 +51,15 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 downloadButton.addEventListener('click', () => {
                     headline.style.pointerEvents = 'none'; // Disable pointer events on the headline
                     const imageElement = container.querySelector('img');
-                    downloadImage(imageElement, data.headlines[index], headline);
+                    downloadImage(imageElement, headline.textContent, headline);
                 });
                 container.appendChild(downloadButton);
 
                 imageResultDiv.appendChild(container);
+
+                // Add logging to check positions and dimensions
+                console.log("Headline position and dimensions:", headline.getBoundingClientRect());
+                console.log("Download button position and dimensions:", downloadButton.getBoundingClientRect());
             });
 
             // Initialize interact.js for drag-and-drop
