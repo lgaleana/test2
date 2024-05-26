@@ -63,9 +63,9 @@ button:hover {
     cursor: move;
     user-select: none;
     padding: 5px;
-    background-color: rgba(255, 255, 255, 0.7);
     border: 1px solid #ccc;
     border-radius: 3px;
+    background-color: transparent !important; /* Ensure no background */
 }
 
 .draggable[contenteditable="true"] {
