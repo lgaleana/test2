@@ -52,7 +52,13 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     return {"images": images, "headlines": headlines}
 
 @app.post("/download-image")
-async def download_image(image: UploadFile = File(...), text: str = Form(...), x: float = Form(...), y: float = Form(...)):
+async def download_image(
+    image: UploadFile = File(...), 
+    text: str = Form(...), 
+    x: float = Form(...), 
+    y: float = Form(...),
+    font_size: int = Form(...)
+):
     try:
         image_data = await image.read()
         image = Image.open(BytesIO(image_data))
@@ -63,8 +69,7 @@ async def download_image(image: UploadFile = File(...), text: str = Form(...), x
     
     # Load a TrueType font
     font_path = "app/static/fonts/Arial.ttf"
-    font_size = 20  # Adjust the font size as needed
-    font = ImageFont.truetype(font_path, font_size)
+    font = ImageFont.truetype(font_path, font_size)  # Use the provided font size
 
     # Adjust the coordinates to account for any transformations or scaling
     adjusted_x = int(x)

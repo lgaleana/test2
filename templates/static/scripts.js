@@ -33,6 +33,25 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.setAttribute('contenteditable', 'true'); // Make the text editable
                 container.appendChild(headline);
 
+                const fontSizeLabel = document.createElement('label');
+                fontSizeLabel.setAttribute('for', 'font-size');
+                fontSizeLabel.textContent = 'Font Size:';
+                container.appendChild(fontSizeLabel);
+
+                const fontSizeInput = document.createElement('input');
+                fontSizeInput.setAttribute('type', 'number');
+                fontSizeInput.setAttribute('id', 'font-size');
+                fontSizeInput.setAttribute('name', 'font-size');
+                fontSizeInput.setAttribute('value', '20');
+                fontSizeInput.setAttribute('min', '10');
+                fontSizeInput.setAttribute('max', '100');
+                container.appendChild(fontSizeInput);
+
+                // Add event listener to update font size in real-time
+                fontSizeInput.addEventListener('input', () => {
+                    headline.style.fontSize = `${fontSizeInput.value}px`;
+                });
+
                 const cropButton = document.createElement('button');
                 cropButton.textContent = 'Crop';
                 cropButton.addEventListener('click', () => {
@@ -51,7 +70,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 downloadButton.addEventListener('click', () => {
                     headline.style.pointerEvents = 'none'; // Disable pointer events on the headline
                     const imageElement = container.querySelector('img');
-                    downloadImage(imageElement, headline.textContent, headline);
+                    downloadImage(imageElement, headline.textContent, headline, fontSizeInput.value);
                 });
                 container.appendChild(downloadButton);
 
@@ -112,7 +131,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
     });
 });
 
-async function downloadImage(imageElement, text, headlineElement) {
+async function downloadImage(imageElement, text, headlineElement, fontSize) {
     const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
     const imageUrl = imageElement.dataset.blob || imageElement.src;
@@ -125,6 +144,7 @@ async function downloadImage(imageElement, text, headlineElement) {
     formData.append('text', text);
     formData.append('x', x);
     formData.append('y', y);
+    formData.append('font_size', fontSize); // Include the font size
 
     const downloadResponse = await fetch('/download-image', {
         method: 'POST',
