@@ -47,6 +47,11 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 fontSizeInput.setAttribute('max', '100');
                 container.appendChild(fontSizeInput);
 
+                // Add event listener to update font size in real-time
+                fontSizeInput.addEventListener('input', () => {
+                    headline.style.fontSize = `${fontSizeInput.value}px`;
+                });
+
                 const cropButton = document.createElement('button');
                 cropButton.textContent = 'Crop';
                 cropButton.addEventListener('click', () => {
