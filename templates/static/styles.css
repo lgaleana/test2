@@ -62,17 +62,19 @@ button:hover {
     left: 10px; /* Adjust as needed */
     cursor: move;
     user-select: none;
-    border: 1px solid #ccc;
+    border: none !important; /* Remove border */
     border-radius: 3px;
     background-color: transparent !important; /* Ensure no background */
     padding: 0 !important; /* Remove padding */
     margin: 0 !important; /* Remove margin */
+    font-family: Arial, sans-serif; /* Ensure the same font is used */
 }
 
 .draggable[contenteditable="true"] {
-    border: 1px dashed #ccc;
+    border: none !important; /* Remove border */
     padding: 5px;
     margin: 0 !important; /* Remove margin */
+    font-family: Arial, sans-serif; /* Ensure the same font is used */
 }
 
 .image-container button {
