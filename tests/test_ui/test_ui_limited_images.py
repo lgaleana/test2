@@ -25,7 +25,7 @@ def test_ui_with_limited_images(browser):
     assert len(images) == 1
 
     # Verify the image sources and overlayed text
-    expected_images = ["http://example.com/image1.jpg"]
+    expected_images = ["/fetch-image?url=http%3A%2F%2Fexample.com%2Fimage1.jpg"]
     expected_headlines = ["Mocked Ad Headline"]
     for container, expected_src, expected_text in zip(images, expected_images, expected_headlines):
         img = container.query_selector("img")

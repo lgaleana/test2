@@ -9,7 +9,7 @@ client = TestClient(app)
 
 
 def mock_requests_get(*args, **kwargs):
-    img = Image.new('RGB', (100, 100), color = (73, 109, 137))
+    img = Image.new('RGB', (100, 100), color=(73, 109, 137))
     img_byte_arr = BytesIO()
     img.save(img_byte_arr, format='PNG')
     img_byte_arr.seek(0)
@@ -21,7 +21,16 @@ def mock_requests_get(*args, **kwargs):
 
 @patch('requests.get', side_effect=mock_requests_get)
 def test_download_image(mock_get):
-    response = client.post("/download-image", json={"image_url": "http://example.com/image.png", "text": "Test", "x": 10, "y": 10})
+    # Create a mock image file
+    img = Image.new('RGB', (100, 100), color=(73, 109, 137))
+    img_byte_arr = BytesIO()
+    img.save(img_byte_arr, format='PNG')
+    img_byte_arr.seek(0)
+
+    files = {'image': ('image.png', img_byte_arr, 'image/png')}
+    data = {'text': 'Test', 'x': 10, 'y': 10}
+
+    response = client.post("/download-image", files=files, data=data)
     assert response.status_code == 200
     assert response.headers["Content-Disposition"] == "attachment; filename=overlayed_image.png"
     assert response.headers["Content-Type"] == "image/png"
