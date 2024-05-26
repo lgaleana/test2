@@ -11,12 +11,17 @@ import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
+import logging
 
 # Load environment variables
 load_dotenv()
 
 # Initialize OpenAI API key
 openai_api_key = os.getenv("OPENAI_API_KEY")
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = APIRouter()
 
@@ -71,9 +76,17 @@ async def download_image(
     font_path = "app/static/fonts/Arial.ttf"
     font = ImageFont.truetype(font_path, font_size)  # Use the provided font size
 
-    # Adjust the coordinates to account for any transformations or scaling
-    adjusted_x = int(x)
-    adjusted_y = int(y)
+    # Round the coordinates to the nearest integer
+    adjusted_x = round(x)
+    adjusted_y = round(y)
+
+    # Log the coordinates and dimensions
+    logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}")
+    logger.info(f"Image size: {image.size}")
+
+    # Log the text bounding box
+    text_bbox = draw.textbbox((adjusted_x, adjusted_y), text, font=font)
+    logger.info(f"Text bounding box: {text_bbox}")
 
     draw.text((adjusted_x, adjusted_y), text, font=font, fill="black")
 

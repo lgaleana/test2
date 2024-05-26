@@ -3,6 +3,13 @@ async function downloadImage(imageElement, text, headlineElement, fontSize) {
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
     const imageUrl = imageElement.dataset.blob || imageElement.src;
 
+    // Log the coordinates and dimensions
+    console.log(`Text: ${text}, X: ${x}, Y: ${y}, Font Size: ${fontSize}`);
+    console.log(`Image URL: ${imageUrl}`);
+    console.log(`Headline dimensions: ${headlineElement.getBoundingClientRect()}`);
+    console.log(`Image dimensions: ${imageElement.getBoundingClientRect()}`);
+    console.log(`Image size: Width: ${imageElement.naturalWidth}, Height: ${imageElement.naturalHeight}`);
+
     const response = await fetch(imageUrl);
     const blob = await response.blob();
 
