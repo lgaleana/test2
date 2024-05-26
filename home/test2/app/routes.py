@@ -66,24 +66,22 @@ async def download_image(
     color: str = Form(...),
     font_type: str = Form(...),  # Add font_type parameter
 ):
-    try {
+    try:
         image_data = await image.read()
         image = Image.open(BytesIO(image_data))
-    } except Exception as e {
+    except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    }
 
     draw = ImageDraw.Draw(image)
     
     # Load the selected font
     font_path = f"app/static/fonts/{font_type}.ttf"
     logger.info(f"Loading font from path: {font_path}")
-    try {
+    try:
         font = ImageFont.truetype(font_path, font_size)
-    } except OSError as e {
+    except OSError as e:
         logger.error(f"Error loading font: {e}")
         raise HTTPException(status_code=400, detail="Font not found")
-    }
 
     # Round the coordinates to the nearest integer
     adjusted_x = round(x)
@@ -111,11 +109,10 @@ def fetch_image(url: HttpUrl):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
         "Accept": "*/*",
     }
-    try {
+    try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-    } except requests.RequestException as e {
+    except requests.RequestException as e:
         raise HTTPException(status_code=400, detail=str(e))
-    }
 
     return StreamingResponse(BytesIO(response.content), media_type=response.headers['Content-Type'])
