@@ -6,6 +6,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
     const cropImage = document.getElementById('crop-image');
     const cropButton = document.getElementById('crop-button');
     let cropper;
+    let currentImageContainer; // To keep track of the current image container being cropped
 
     imageResultDiv.innerHTML = ''; // Clear previous images
 
@@ -40,6 +41,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                         aspectRatio: 16 / 9,
                         viewMode: 1,
                     });
+                    currentImageContainer = container; // Set the current image container
                 });
                 container.appendChild(cropButton);
 
@@ -47,7 +49,8 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 downloadButton.textContent = 'Download';
                 downloadButton.addEventListener('click', () => {
                     headline.style.pointerEvents = 'none'; // Disable pointer events on the headline
-                    downloadImage(src, data.headlines[index], headline);
+                    const imageElement = container.querySelector('img');
+                    downloadImage(imageElement, data.headlines[index], headline);
                 });
                 container.appendChild(downloadButton);
 
@@ -84,28 +87,48 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
 
     cropButton.addEventListener('click', () => {
         const croppedCanvas = cropper.getCroppedCanvas();
-        const croppedImageURL = croppedCanvas.toDataURL('image/png');
-        cropImage.src = croppedImageURL;
-        cropContainer.style.display = 'none';
-        cropper.destroy();
+        croppedCanvas.toBlob((blob) => {
+            const croppedImageURL = URL.createObjectURL(blob);
+            
+            // Display the cropped image
+            const croppedImage = document.createElement('img');
+            croppedImage.src = croppedImageURL;
+            croppedImage.alt = 'Cropped image';
+            croppedImage.style.maxWidth = '100%';
+
+            // Replace the original image with the cropped image in the current image container
+            const originalImage = currentImageContainer.querySelector('img');
+            originalImage.src = croppedImageURL;
+            originalImage.dataset.blob = croppedImageURL; // Store the blob URL for download
+
+            cropContainer.style.display = 'none';
+            cropper.destroy();
+        }, 'image/png');
     });
 });
 
-async function downloadImage(imageUrl, text, headlineElement) {
+async function downloadImage(imageElement, text, headlineElement) {
     const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
+    const imageUrl = imageElement.dataset.blob || imageElement.src;
 
-    const response = await fetch('/download-image', {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+
+    const formData = new FormData();
+    formData.append('image', blob, 'cropped_image.png');
+    formData.append('text', text);
+    formData.append('x', x);
+    formData.append('y', y);
+
+    const downloadResponse = await fetch('/download-image', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ image_url: imageUrl, text: text, x: x, y: y })
+        body: formData
     });
 
-    if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
+    if (downloadResponse.ok) {
+        const downloadBlob = await downloadResponse.blob();
+        const url = window.URL.createObjectURL(downloadBlob);
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
