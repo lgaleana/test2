@@ -218,4 +218,3 @@ async function downloadImage(imageElement, text, headlineElement, fontSize, colo
         alert('Failed to download image');
     }
 }
-
