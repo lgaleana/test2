@@ -68,10 +68,16 @@ button:hover {
     border-radius: 3px;
 }
 
+.draggable[contenteditable="true"] {
+    border: 1px dashed #ccc;
+    padding: 5px;
+}
+
 .image-container button {
     margin-top: 10px;
     z-index: 1; /* Ensure the button is above the draggable element */
     position: relative; /* Ensure the button is positioned correctly */
+    display: block; /* Ensure buttons are displayed in a block format to avoid overlap */
 }
 
 #crop-container {
