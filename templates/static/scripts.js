@@ -49,7 +49,8 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 downloadButton.textContent = 'Download';
                 downloadButton.addEventListener('click', () => {
                     headline.style.pointerEvents = 'none'; // Disable pointer events on the headline
-                    downloadImage(src, data.headlines[index], headline);
+                    const imageElement = container.querySelector('img');
+                    downloadImage(imageElement.src, data.headlines[index], headline);
                 });
                 container.appendChild(downloadButton);
 
