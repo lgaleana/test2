@@ -11,12 +11,17 @@ import requests
 from bs4 import BeautifulSoup
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont
+import logging
 
 # Load environment variables
 load_dotenv()
 
 # Initialize OpenAI API key
 openai_api_key = os.getenv("OPENAI_API_KEY")
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = APIRouter()
 
@@ -75,9 +80,9 @@ async def download_image(
     adjusted_x = int(x)
     adjusted_y = int(y)
 
-    # Apply any necessary adjustments to the coordinates
-    # For example, if the y-coordinate is off, adjust it here
-    adjusted_y += 10  # Adjust the y-coordinate by 10 pixels (example adjustment)
+    # Log the coordinates and dimensions
+    logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}")
+    logger.info(f"Image size: {image.size}")
 
     draw.text((adjusted_x, adjusted_y), text, font=font, fill="black")
 
