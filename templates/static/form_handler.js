@@ -53,6 +53,24 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                     headline.style.fontSize = `${fontSizeInput.value}px`;
                 });
 
+                // Add color picker
+                const colorLabel = document.createElement('label');
+                colorLabel.setAttribute('for', 'font-color');
+                colorLabel.textContent = 'Font Color:';
+                container.appendChild(colorLabel);
+
+                const colorInput = document.createElement('input');
+                colorInput.setAttribute('type', 'color');
+                colorInput.setAttribute('id', 'font-color');
+                colorInput.setAttribute('name', 'font-color');
+                colorInput.setAttribute('value', '#000000'); // Default to black
+                container.appendChild(colorInput);
+
+                // Add event listener to update font color in real-time
+                colorInput.addEventListener('input', () => {
+                    headline.style.color = colorInput.value;
+                });
+
                 const cropButton = document.createElement('button');
                 cropButton.textContent = 'Crop';
                 cropButton.addEventListener('click', () => {
@@ -71,7 +89,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 downloadButton.addEventListener('click', () => {
                     headline.style.pointerEvents = 'none'; // Disable pointer events on the headline
                     const imageElement = container.querySelector('img');
-                    downloadImage(imageElement, headline.textContent, headline, fontSizeInput.value);
+                    downloadImage(imageElement, headline.textContent, headline, fontSizeInput.value, colorInput.value);
                 });
                 container.appendChild(downloadButton);
 

@@ -62,7 +62,8 @@ async def download_image(
     text: str = Form(...), 
     x: float = Form(...), 
     y: float = Form(...),
-    font_size: int = Form(...)
+    font_size: int = Form(...),
+    color: str = Form(...),  # Add color parameter
 ):
     try:
         image_data = await image.read()
@@ -81,14 +82,14 @@ async def download_image(
     adjusted_y = round(y)
 
     # Log the coordinates and dimensions
-    logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}")
+    logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}, Color: {color}")
     logger.info(f"Image size: {image.size}")
 
     # Log the text bounding box
     text_bbox = draw.textbbox((adjusted_x, adjusted_y), text, font=font)
     logger.info(f"Text bounding box: {text_bbox}")
 
-    draw.text((adjusted_x, adjusted_y), text, font=font, fill="black")
+    draw.text((adjusted_x, adjusted_y), text, font=font, fill=color)  # Use the provided color
 
     img_byte_arr = BytesIO()
     image.save(img_byte_arr, format='PNG')
