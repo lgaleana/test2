@@ -37,6 +37,10 @@ def test_ui_text_editing(browser):
     # Set the font size
     page.fill("#font-size", "30")
 
+    # Select a font type
+    font_type_select = page.query_selector("#font-type")
+    font_type_select.select_option("Font1")
+
     # Mock the download request
     page.route("**/download-image", lambda route: route.fulfill(
         status=200,

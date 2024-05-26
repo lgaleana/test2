@@ -63,7 +63,8 @@ async def download_image(
     x: float = Form(...), 
     y: float = Form(...),
     font_size: int = Form(...),
-    color: str = Form(...),  # Add color parameter
+    color: str = Form(...),
+    font_type: str = Form(...),  # Add font_type parameter
 ):
     try:
         image_data = await image.read()
@@ -73,9 +74,10 @@ async def download_image(
 
     draw = ImageDraw.Draw(image)
     
-    # Load a TrueType font
-    font_path = "app/static/fonts/Arial.ttf"
-    font = ImageFont.truetype(font_path, font_size)  # Use the provided font size
+    # Load the selected font
+    font_path = f"app/static/fonts/{font_type}.ttf"
+    logger.info(f"Loading font from path: {font_path}")
+    font = ImageFont.truetype(font_path, font_size)
 
     # Round the coordinates to the nearest integer
     adjusted_x = round(x)
