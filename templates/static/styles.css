@@ -68,8 +68,9 @@ button:hover {
  padding: 0 !important; /* Remove padding */
  margin: 0 !important; /* Remove margin */
  font-family: Arial, sans-serif; /* Ensure the same font is used */
- line-height: normal; /* Ensure consistent line height */
+ line-height: 1; /* Ensure consistent line height */
  letter-spacing: normal; /* Ensure consistent letter spacing */
+ text-align: left; /* Ensure consistent text alignment */
 }
 
 .draggable[contenteditable="true"] {
@@ -77,8 +78,9 @@ button:hover {
  padding: 5px;
  margin: 0 !important; /* Remove margin */
  font-family: Arial, sans-serif; /* Ensure the same font is used */
- line-height: normal; /* Ensure consistent line height */
+ line-height: 1; /* Ensure consistent line height */
  letter-spacing: normal; /* Ensure consistent letter spacing */
+ text-align: left; /* Ensure consistent text alignment */
 }
 
 .image-container button {

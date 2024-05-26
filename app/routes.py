@@ -80,6 +80,10 @@ async def download_image(
     adjusted_x = round(x)
     adjusted_y = round(y)
 
+    # Apply an adjustment to the y-coordinate based on the observed difference
+    y_adjustment = 5  # Example adjustment value
+    adjusted_y += y_adjustment
+
     # Log the coordinates and dimensions
     logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}")
     logger.info(f"Image size: {image.size}")
