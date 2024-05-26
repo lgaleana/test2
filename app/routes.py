@@ -63,7 +63,8 @@ async def download_image(
     x: float = Form(...), 
     y: float = Form(...),
     font_size: int = Form(...),
-    color: str = Form(...),  # Add color parameter
+    color: str = Form(...),
+    font_type: str = Form(...),  # Add font type parameter
 ):
     try:
         image_data = await image.read()
@@ -73,23 +74,23 @@ async def download_image(
 
     draw = ImageDraw.Draw(image)
     
-    # Load a TrueType font
-    font_path = "app/static/fonts/Arial.ttf"
-    font = ImageFont.truetype(font_path, font_size)  # Use the provided font size
+    # Load the appropriate font based on the font type
+    font_path = f"app/static/fonts/{font_type}.ttf"
+    font = ImageFont.truetype(font_path, font_size)
 
     # Round the coordinates to the nearest integer
     adjusted_x = round(x)
     adjusted_y = round(y)
 
     # Log the coordinates and dimensions
-    logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}, Color: {color}")
+    logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}, Color: {color}, Font Type: {font_type}")
     logger.info(f"Image size: {image.size}")
 
     # Log the text bounding box
     text_bbox = draw.textbbox((adjusted_x, adjusted_y), text, font=font)
     logger.info(f"Text bounding box: {text_bbox}")
 
-    draw.text((adjusted_x, adjusted_y), text, font=font, fill=color)  # Use the provided color
+    draw.text((adjusted_x, adjusted_y), text, font=font, fill=color)
 
     img_byte_arr = BytesIO()
     image.save(img_byte_arr, format='PNG')

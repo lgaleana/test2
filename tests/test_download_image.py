@@ -28,7 +28,7 @@ def test_download_image(mock_get):
     img_byte_arr.seek(0)
 
     files = {'image': ('image.png', img_byte_arr, 'image/png')}
-    data = {'text': 'Test', 'x': 10, 'y': 10, 'font_size': 20, 'color': '#FF0000'}  # Include color in the data
+    data = {'text': 'Test', 'x': 10, 'y': 10, 'font_size': 20, 'color': '#FF0000', 'font_type': 'Arial'}  # Include font type in the data
 
     response = client.post("/download-image", files=files, data=data)
     assert response.status_code == 200
