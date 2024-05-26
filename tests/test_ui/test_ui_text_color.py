@@ -19,9 +19,9 @@ def test_ui_text_color(browser):
     # Wait for the result to be updated
     page.wait_for_selector("#image-result .image-container")
 
-    # Change the text color
+    # Change the text color using evaluate
     color_input = page.query_selector("#image-result .image-container input[type='color']")
-    color_input.fill("#FF0000")  # Set color to red
+    page.evaluate('(color_input) => { color_input.value = "#FF0000"; color_input.dispatchEvent(new Event("input")); }', color_input)  # Set color to red and trigger input event
 
     # Verify the text color in the UI
     headline = page.query_selector("#image-result p.draggable")
