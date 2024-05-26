@@ -66,11 +66,13 @@ button:hover {
     border-radius: 3px;
     background-color: transparent !important; /* Ensure no background */
     padding: 0 !important; /* Remove padding */
+    margin: 0 !important; /* Remove margin */
 }
 
 .draggable[contenteditable="true"] {
     border: 1px dashed #ccc;
     padding: 5px;
+    margin: 0 !important; /* Remove margin */
 }
 
 .image-container button {
