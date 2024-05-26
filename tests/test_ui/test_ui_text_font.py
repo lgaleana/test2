@@ -29,7 +29,12 @@ def test_ui_text_font(browser):
     font_family = page.evaluate('''(headline) => {
         return window.getComputedStyle(headline).fontFamily;
     }''', headline)
-    assert font_family == "Courier New"  # Ensure the font is Courier New
+    
+    # Log the font family for debugging
+    print(f"Font family: {font_family}")
+
+    # Strip quotes and compare
+    assert font_family.strip('"') == "Courier New"  # Ensure the font is Courier New
 
     # Mock the download request
     page.route("**/download-image", lambda route: route.fulfill(
