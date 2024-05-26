@@ -31,6 +31,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.setAttribute('data-x', 10); // Set initial x position
                 headline.setAttribute('data-y', 10); // Set initial y position
                 headline.setAttribute('contenteditable', 'true'); // Make the text editable
+                headline.style.backgroundColor = 'transparent'; // Ensure no background
                 container.appendChild(headline);
 
                 const fontSizeLabel = document.createElement('label');
