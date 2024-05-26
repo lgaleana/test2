@@ -1,10 +1,10 @@
-async function downloadImage(imageElement, text, headlineElement, fontSize) {
+async function downloadImage(imageElement, text, headlineElement, fontSize, color) {
     const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
     const imageUrl = imageElement.dataset.blob || imageElement.src;
 
     // Log the coordinates and dimensions
-    console.log(`Text: ${text}, X: ${x}, Y: ${y}, Font Size: ${fontSize}`);
+    console.log(`Text: ${text}, X: ${x}, Y: ${y}, Font Size: ${fontSize}, Color: ${color}`);
     console.log(`Image URL: ${imageUrl}`);
     console.log(`Headline dimensions: ${headlineElement.getBoundingClientRect()}`);
     console.log(`Image dimensions: ${imageElement.getBoundingClientRect()}`);
@@ -19,6 +19,7 @@ async function downloadImage(imageElement, text, headlineElement, fontSize) {
     formData.append('x', x);
     formData.append('y', y);
     formData.append('font_size', fontSize); // Include the font size
+    formData.append('color', color); // Include the color
 
     const downloadResponse = await fetch('/download-image', {
         method: 'POST',

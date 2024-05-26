@@ -28,7 +28,7 @@ def test_download_image(mock_get):
     img_byte_arr.seek(0)
 
     files = {'image': ('image.png', img_byte_arr, 'image/png')}
-    data = {'text': 'Test', 'x': 10, 'y': 10, 'font_size': 20}
+    data = {'text': 'Test', 'x': 10, 'y': 10, 'font_size': 20, 'color': '#FF0000'}  # Include color in the data
 
     response = client.post("/download-image", files=files, data=data)
     assert response.status_code == 200
@@ -43,3 +43,7 @@ def test_download_image(mock_get):
     font = ImageFont.truetype(font_path, font_size)
     text_bbox = draw.textbbox((10, 10), "Test", font=font)
     assert text_bbox is not None
+
+    # Verify the text color
+    pixel_color = img.getpixel((text_bbox[0] + 1, text_bbox[1] + 1))  # Get the color of a pixel within the text bounding box
+    assert pixel_color == (255, 0, 0)  # Ensure the color is red (#FF0000)
