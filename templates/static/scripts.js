@@ -33,6 +33,15 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.setAttribute('contenteditable', 'true'); // Make the text editable
                 container.appendChild(headline);
 
+                const fontSizeInput = document.createElement('input');
+                fontSizeInput.type = 'number';
+                fontSizeInput.id = 'font-size';
+                fontSizeInput.name = 'font-size';
+                fontSizeInput.value = 20; // Default font size
+                fontSizeInput.min = 10;
+                fontSizeInput.max = 100;
+                container.appendChild(fontSizeInput);
+
                 const cropButton = document.createElement('button');
                 cropButton.textContent = 'Crop';
                 cropButton.addEventListener('click', () => {
@@ -51,7 +60,8 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 downloadButton.addEventListener('click', () => {
                     headline.style.pointerEvents = 'none'; // Disable pointer events on the headline
                     const imageElement = container.querySelector('img');
-                    downloadImage(imageElement, headline.textContent, headline);
+                    const fontSize = fontSizeInput.value; // Get the font size
+                    downloadImage(imageElement, headline.textContent, headline, fontSize);
                 });
                 container.appendChild(downloadButton);
 
@@ -112,7 +122,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
     });
 });
 
-async function downloadImage(imageElement, text, headlineElement) {
+async function downloadImage(imageElement, text, headlineElement, fontSize) {
     const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
     const imageUrl = imageElement.dataset.blob || imageElement.src;
@@ -125,6 +135,7 @@ async function downloadImage(imageElement, text, headlineElement) {
     formData.append('text', text);
     formData.append('x', x);
     formData.append('y', y);
+    formData.append('font_size', fontSize); // Include font size
 
     const downloadResponse = await fetch('/download-image', {
         method: 'POST',

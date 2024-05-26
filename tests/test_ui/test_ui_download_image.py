@@ -36,6 +36,9 @@ def test_ui_download_image(browser):
         body=b""
     ))
 
+    # Set the font size
+    page.fill("#image-result .image-container:nth-of-type(1) input[name='font-size']", "30")
+
     # Click the download button for the first image
     with page.expect_download() as download_info:
         page.click("#image-result .image-container:nth-of-type(1) button:nth-of-type(2)")  # Ensure the correct button is clicked
