@@ -76,9 +76,9 @@ async def download_image(
     font_path = "app/static/fonts/Arial.ttf"
     font = ImageFont.truetype(font_path, font_size)  # Use the provided font size
 
-    # Adjust the coordinates to account for any transformations or scaling
-    adjusted_x = int(x)
-    adjusted_y = int(y)
+    # Round the coordinates to the nearest integer
+    adjusted_x = round(x)
+    adjusted_y = round(y)
 
     # Log the coordinates and dimensions
     logger.info(f"Text: {text}, X: {adjusted_x}, Y: {adjusted_y}, Font Size: {font_size}")
