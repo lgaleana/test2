@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_form_submission(browser):
     page = browser.new_page()
 
@@ -26,7 +25,7 @@ def test_ui_form_submission(browser):
     assert len(images) == 2
 
     # Verify the image sources and overlayed text
-    expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
+    expected_images = ["/fetch-image?url=http%3A%2F%2Fexample.com%2Fimage1.jpg", "/fetch-image?url=http%3A%2F%2Fexample.com%2Fimage2.jpg"]
     expected_headlines = ["Mocked Ad Headline", "Another Mocked Headline"]
     for container, expected_src, expected_text in zip(images, expected_images, expected_headlines):
         img = container.query_selector("img")
