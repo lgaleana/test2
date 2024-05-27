@@ -142,17 +142,9 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                         const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
                         const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-                        // Ensure the text stays within the bounds of the image wrapper
-                        const container = target.closest('.image-wrapper');
-                        const containerRect = container.getBoundingClientRect();
-                        const targetRect = target.getBoundingClientRect();
-
-                        const newX = Math.min(Math.max(x, 0), containerRect.width - targetRect.width);
-                        const newY = Math.min(Math.max(y, 0), containerRect.height - targetRect.height);
-
-                        target.style.transform = `translate(${newX}px, ${newY}px)`;
-                        target.setAttribute('data-x', newX);
-                        target.setAttribute('data-y', newY);
+                        target.style.transform = `translate(${x}px, ${y}px)`;
+                        target.setAttribute('data-x', x);
+                        target.setAttribute('data-y', y);
                     }
                 }
             });
