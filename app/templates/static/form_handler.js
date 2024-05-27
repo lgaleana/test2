@@ -38,6 +38,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.setAttribute('data-y', 10); // Set initial y position
                 headline.setAttribute('contenteditable', 'true'); // Make the text editable
                 headline.style.backgroundColor = 'transparent'; // Ensure no background
+                headline.style.fontSize = '20px'; // Set default font size
                 imageWrapper.appendChild(headline);
 
                 container.appendChild(imageWrapper);
