@@ -5,10 +5,13 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
     const cropContainer = document.getElementById('crop-container');
     const cropImage = document.getElementById('crop-image');
     const cropButton = document.getElementById('crop-button');
+    const loadingIndicator = document.getElementById('loading-indicator');
     let cropper;
     let currentImageContainer; // To keep track of the current image container being cropped
 
     imageResultDiv.innerHTML = ''; // Clear previous images
+    loadingIndicator.style.display = 'block'; // Show loading indicator
+    console.log("Loading indicator shown");
 
     try {
         const response = await fetch(`/extract-text?url=${encodeURIComponent(urlInput)}`);
@@ -153,6 +156,9 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
         }
     } catch (error) {
         imageResultDiv.textContent = `Error: ${error.message}`;
+    } finally {
+        loadingIndicator.style.display = 'none'; // Hide loading indicator
+        console.log("Loading indicator hidden");
     }
 
     cropButton.addEventListener('click', () => {
