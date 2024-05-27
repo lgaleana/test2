@@ -19,11 +19,14 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 const container = document.createElement('div');
                 container.classList.add('image-container');
 
+                const imageWrapper = document.createElement('div');
+                imageWrapper.classList.add('image-wrapper');
+
                 const img = document.createElement('img');
                 img.src = `/fetch-image?url=${encodeURIComponent(src)}`;
                 img.alt = 'Extracted image';
                 img.style.maxWidth = '100%';
-                container.appendChild(img);
+                imageWrapper.appendChild(img);
 
                 const headline = document.createElement('p');
                 headline.textContent = data.headlines[index];
@@ -32,7 +35,9 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                 headline.setAttribute('data-y', 10); // Set initial y position
                 headline.setAttribute('contenteditable', 'true'); // Make the text editable
                 headline.style.backgroundColor = 'transparent'; // Ensure no background
-                container.appendChild(headline);
+                imageWrapper.appendChild(headline);
+
+                container.appendChild(imageWrapper);
 
                 const fontSizeLabel = document.createElement('label');
                 fontSizeLabel.setAttribute('for', 'font-size');
@@ -126,7 +131,7 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
             interact('.draggable').draggable({
                 modifiers: [
                     interact.modifiers.restrictRect({
-                        restriction: 'parent', // Restrict to the parent container
+                        restriction: '.image-wrapper', // Restrict to the image wrapper
                         endOnly: true,
                         elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
                     })
@@ -137,8 +142,8 @@ document.getElementById('url-form').addEventListener('submit', async function(ev
                         const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
                         const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-                        // Ensure the text stays within the bounds of the image container
-                        const container = target.closest('.image-container');
+                        // Ensure the text stays within the bounds of the image wrapper
+                        const container = target.closest('.image-wrapper');
                         const containerRect = container.getBoundingClientRect();
                         const targetRect = target.getBoundingClientRect();
 
