@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_text_font(browser):
     page = browser.new_page()
 
@@ -29,7 +28,7 @@ def test_ui_text_font(browser):
     font_family = page.evaluate('''(headline) => {
         return window.getComputedStyle(headline).fontFamily;
     }''', headline)
-    
+
     # Log the font family for debugging
     print(f"Font family: {font_family}")
 
@@ -40,7 +39,7 @@ def test_ui_text_font(browser):
     page.route("**/download-image", lambda route: route.fulfill(
         status=200,
         content_type="image/png",
-        headers={"Content-Disposition": "attachment; filename=overlayed_image.png"},
+        headers={"Content-Disposition": "attachment; filename=Mocked_Ad_Headline.png"},
         body=b""
     ))
 
@@ -50,6 +49,6 @@ def test_ui_text_font(browser):
     download = download_info.value
 
     # Verify the download
-    assert download.suggested_filename == "overlayed_image.png"
+    assert download.suggested_filename == "Mocked_Ad_Headline.png"
 
     page.close()
