@@ -74,6 +74,7 @@ async def download_image(
     font_size: int = Form(20),  # Default value
     color: str = Form(...),
     font_type: str = Form(...),
+    headline: str = Form(...)  # Add headline parameter
 ):
     try:
         image_data = await image.read()
@@ -105,7 +106,14 @@ async def download_image(
     image.save(img_byte_arr, format='PNG')
     img_byte_arr.seek(0)
 
-    return StreamingResponse(img_byte_arr, media_type="image/png", headers={"Content-Disposition": "attachment; filename=overlayed_image.png"})
+    # Sanitize the headline to create a valid filename
+    sanitized_headline = "".join([c if c.isalnum() else "_" for c in headline])
+
+    return StreamingResponse(
+        img_byte_arr, 
+        media_type="image/png", 
+        headers={"Content-Disposition": f"attachment; filename={sanitized_headline}.png"}
+    )
 
 @app.get("/fetch-image")
 def fetch_image(url: HttpUrl):

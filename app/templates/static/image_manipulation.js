@@ -2,10 +2,12 @@ async function downloadImage(imageElement, text, headlineElement, fontSize, colo
     const x = parseFloat(headlineElement.getAttribute('data-x')) || 0;
     const y = parseFloat(headlineElement.getAttribute('data-y')) || 0;
     const imageUrl = imageElement.dataset.blob || imageElement.src;
+    const headline = headlineElement.textContent.trim();  // Get the headline text
 
     // Log the coordinates and dimensions
     console.log(`Text: ${text}, X: ${x}, Y: ${y}, Font Size: ${fontSize}, Color: ${color}, Font Type: ${fontType}`);
     console.log(`Image URL: ${imageUrl}`);
+    console.log(`Headline: ${headline}`);
     console.log(`Headline dimensions: ${headlineElement.getBoundingClientRect()}`);
     console.log(`Image dimensions: ${imageElement.getBoundingClientRect()}`);
     console.log(`Image size: Width: ${imageElement.naturalWidth}, Height: ${imageElement.naturalHeight}`);
@@ -21,6 +23,7 @@ async function downloadImage(imageElement, text, headlineElement, fontSize, colo
     formData.append('font_size', fontSize); // Include the font size
     formData.append('color', color); // Include the color
     formData.append('font_type', fontType); // Include the font type
+    formData.append('headline', headline); // Include the headline
 
     const downloadResponse = await fetch('/download-image', {
         method: 'POST',
@@ -33,7 +36,7 @@ async function downloadImage(imageElement, text, headlineElement, fontSize, colo
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = 'overlayed_image.png';
+        a.download = `${headline}.png`;  // Use the headline as the filename
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
