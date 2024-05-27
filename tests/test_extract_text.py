@@ -38,6 +38,25 @@ def mock_requests_get_image(*args, **kwargs):
         response.status_code = 200
         return response
 
+def mock_openai_chat_completion_create(*args, **kwargs):
+    class MockResponse:
+        def __init__(self):
+            self.choices = [self]
+
+        @property
+        def message(self):
+            class Message:
+                def __init__(self):
+                    self.content = "Mocked Ad Headline"
+            return Message()
+
+    return MockResponse()
+
+def mock_openai_client():
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
+    return mock_client
+
 @patch('requests.get', side_effect=mock_requests_get_image)
 def test_extract_text_success_with_openai(mock_get):
     url = "http://example.com"
