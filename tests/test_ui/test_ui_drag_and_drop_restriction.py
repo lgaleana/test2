@@ -53,7 +53,13 @@ def test_ui_drag_and_drop_restriction(browser):
         # Log container box for debugging
         print(f"Container box: left={container_box['left']}, top={container_box['top']}, width={container_box['width']}, height={container_box['height']}")
 
+        # Log the dimensions of the draggable element
+        print(f"Draggable element dimensions: width={new_box['width']}, height={new_box['height']}")
+
+        # Ensure the headline does not move outside any of the borders
         assert container_box['left'] <= new_box['x'] <= container_box['left'] + container_box['width'] - new_box['width']
         assert container_box['top'] <= new_box['y'] <= container_box['top'] + container_box['height'] - new_box['height']
+        assert new_box['x'] + new_box['width'] <= container_box['left'] + container_box['width']
+        assert new_box['y'] + new_box['height'] <= container_box['top'] + container_box['height']
 
     page.close()
