@@ -7,7 +7,6 @@ from PIL import Image
 
 client = TestClient(app)
 
-
 def mock_requests_get(*args, **kwargs):
     img = Image.new('RGB', (800, 600), color=(73, 109, 137))
     img_byte_arr = BytesIO()
@@ -18,7 +17,6 @@ def mock_requests_get(*args, **kwargs):
     response.status_code = 200
     return response
 
-
 @patch('requests.get', side_effect=mock_requests_get)
 def test_crop_image(mock_get):
     # Create a mock image file
@@ -28,11 +26,19 @@ def test_crop_image(mock_get):
     img_byte_arr.seek(0)
 
     files = {'image': ('image.png', img_byte_arr, 'image/png')}
-    data = {'text': 'Test', 'x': 10, 'y': 10, 'font_size': 20, 'color': '#FF0000', 'font_type': 'Arial'}  # Include font_type in the data
+    data = {
+        'text': 'Test', 
+        'x': 10, 
+        'y': 10, 
+        'font_size': 20, 
+        'color': '#FF0000', 
+        'font_type': 'Arial',
+        'headline': 'Test_Headline'  # Include headline in the data
+    }
 
     response = client.post("/download-image", files=files, data=data)
     assert response.status_code == 200
-    assert response.headers["Content-Disposition"] == "attachment; filename=overlayed_image.png"
+    assert response.headers["Content-Disposition"] == "attachment; filename=Test_Headline.png"
     assert response.headers["Content-Type"] == "image/png"
 
     # Verify the image content
