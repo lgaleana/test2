@@ -18,6 +18,7 @@ load_dotenv()
 
 # Initialize OpenAI API key
 openai_api_key = os.getenv("OPENAI_API_KEY")
+use_openai_headline = os.getenv("USE_OPENAI_HEADLINE", "False") == "True"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -51,8 +52,16 @@ def extract_text(url: HttpUrl = Query(..., description="The URL to extract text 
     # Initialize OpenAI client
     client = OpenAI(api_key=openai_api_key)
 
+    # Log the value of use_openai_headline
+    logger.info(f"USE_OPENAI_HEADLINE: {use_openai_headline}")
+
     # Generate headlines for each image
-    headlines = [generate_headline(client, text, image) for image in images]
+    if use_openai_headline:
+        logger.info("Generating headlines using OpenAI")
+        headlines = [generate_headline(client, text, image) for image in images]
+    else:
+        logger.info("Using default headline")
+        headlines = ["Ad headline" for _ in images]
 
     return {"images": images, "headlines": headlines}
 
