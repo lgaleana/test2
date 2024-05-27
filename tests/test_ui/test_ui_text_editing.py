@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_text_editing(browser):
     page = browser.new_page()
 
@@ -41,7 +40,7 @@ def test_ui_text_editing(browser):
     page.route("**/download-image", lambda route: route.fulfill(
         status=200,
         content_type="image/png",
-        headers={"Content-Disposition": "attachment; filename=overlayed_image.png"},
+        headers={"Content-Disposition": "attachment; filename=Edited_Headline.png"},
         body=b""
     ))
 
@@ -51,6 +50,6 @@ def test_ui_text_editing(browser):
     download = download_info.value
 
     # Verify the download
-    assert download.suggested_filename == "overlayed_image.png"
+    assert download.suggested_filename == "Edited_Headline.png"
 
     page.close()

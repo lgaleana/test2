@@ -1,6 +1,5 @@
 import pytest
 
-
 def test_ui_text_position(browser):
     page = browser.new_page()
 
@@ -30,7 +29,7 @@ def test_ui_text_position(browser):
     page.route("**/download-image", lambda route: route.fulfill(
         status=200,
         content_type="image/png",
-        headers={"Content-Disposition": "attachment; filename=overlayed_image.png"},
+        headers={"Content-Disposition": "attachment; filename=Mocked_Ad_Headline.png"},
         body=b""
     ))
 
@@ -40,9 +39,6 @@ def test_ui_text_position(browser):
     download = download_info.value
 
     # Verify the download
-    assert download.suggested_filename == "overlayed_image.png"
-
-    # Verify the text position in the downloaded image
-    # This can be done by comparing the initial_x and initial_y with the expected coordinates in the downloaded image
+    assert download.suggested_filename == "Mocked_Ad_Headline.png"
 
     page.close()
