@@ -71,9 +71,9 @@ async def download_image(
     text: str = Form(...), 
     x: float = Form(...), 
     y: float = Form(...),
-    font_size: int = Form(...),
+    font_size: int = Form(20),  # Default value
     color: str = Form(...),
-    font_type: str = Form(...),  # Add font type parameter
+    font_type: str = Form(...),
 ):
     try:
         image_data = await image.read()
