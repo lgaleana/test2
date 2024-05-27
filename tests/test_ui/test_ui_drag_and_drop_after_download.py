@@ -1,4 +1,7 @@
 import pytest
+from io import BytesIO
+from PIL import Image
+
 
 def test_ui_drag_and_drop_after_download(browser):
     page = browser.new_page()
@@ -9,6 +12,20 @@ def test_ui_drag_and_drop_after_download(browser):
         content_type="application/json",
         body='{"images": ["http://example.com/image1.jpg"], "headlines": ["Mocked Ad Headline"]}'
     ))
+
+    # Mock the fetch request to /fetch-image
+    def mock_fetch_image(route):
+        img = Image.new('RGB', (800, 600), color=(73, 109, 137))
+        img_byte_arr = BytesIO()
+        img.save(img_byte_arr, format='PNG')
+        img_byte_arr.seek(0)
+        route.fulfill(
+            status=200,
+            content_type="image/png",
+            body=img_byte_arr.read()
+        )
+
+    page.route("**/fetch-image?url=http%3A%2F%2Fexample.com%2Fimage1.jpg", mock_fetch_image)
 
     page.goto("http://localhost:8080/")
 
@@ -23,7 +40,7 @@ def test_ui_drag_and_drop_after_download(browser):
     page.route("**/download-image", lambda route: route.fulfill(
         status=200,
         content_type="image/png",
-        headers={"Content-Disposition": "attachment; filename=overlayed_image.png"},
+        headers={"Content-Disposition": "attachment; filename=Mocked_Ad_Headline.png"},
         body=b""
     ))
 
@@ -33,7 +50,7 @@ def test_ui_drag_and_drop_after_download(browser):
     download = download_info.value
 
     # Verify the download
-    assert download.suggested_filename == "overlayed_image.png"
+    assert download.suggested_filename == "Mocked_Ad_Headline.png"
 
     # Mock the bounding box data
     page.evaluate('''() => {
