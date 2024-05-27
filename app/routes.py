@@ -18,7 +18,7 @@ load_dotenv()
 
 # Initialize OpenAI API key
 openai_api_key = os.getenv("OPENAI_API_KEY")
-use_openai_headline = os.getenv("USE_OPENAI_HEADLINE", "False").lower() == "true"
+use_openai_headline = os.getenv("USE_OPENAI_HEADLINE", "False") == "True"
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

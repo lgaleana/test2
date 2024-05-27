@@ -1,11 +1,15 @@
 import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
-from app.main import app
-from tests.mock_utils import mock_openai_client
 from io import BytesIO
 from PIL import Image
 import os
+
+# Set the environment variable before importing the app
+os.environ["USE_OPENAI_HEADLINE"] = "True"
+
+from app.main import app
+from tests.mock_utils import mock_openai_client
 
 client = TestClient(app)
 
@@ -41,15 +45,13 @@ def test_extract_text_success_with_openai(mock_get):
     expected_headlines = ["Mocked Ad Headline", "Mocked Ad Headline"]
 
     with patch("app.routes.OpenAI", return_value=mock_openai_client()):
-        with patch.dict(os.environ, {"USE_OPENAI_HEADLINE": "True"}):
-            # Add logging to verify the environment variable
-            print(f"USE_OPENAI_HEADLINE in test: {os.getenv('USE_OPENAI_HEADLINE')}")
-            
-            response = client.get("/extract-text", params={"url": url})
-            assert response.status_code == 200
-            assert response.json() == {"images": expected_images, "headlines": expected_headlines}
-            for headline in response.json()["headlines"]:
-                assert len(headline.split()) <= 5  # Ensure each headline is no more than 5 words
+        response = client.get("/extract-text", params={"url": url})
+        assert response.status_code == 200
+        actual_response = response.json()
+        print(f"Actual response: {actual_response}")
+        assert actual_response == {"images": expected_images, "headlines": expected_headlines}
+        for headline in actual_response["headlines"]:
+            assert len(headline.split()) <= 5  # Ensure each headline is no more than 5 words
 
 @patch('requests.get', side_effect=mock_requests_get_image)
 def test_extract_text_success_without_openai(mock_get):
@@ -58,13 +60,17 @@ def test_extract_text_success_without_openai(mock_get):
     expected_headlines = ["Ad headline", "Ad headline"]
 
     with patch.dict(os.environ, {"USE_OPENAI_HEADLINE": "False"}):
-        # Add logging to verify the environment variable
-        print(f"USE_OPENAI_HEADLINE in test: {os.getenv('USE_OPENAI_HEADLINE')}")
+        # Reload the module to apply the patched environment variable
+        import importlib
+        import app.routes
+        importlib.reload(app.routes)
         
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
-        assert response.json() == {"images": expected_images, "headlines": expected_headlines}
-        for headline in response.json()["headlines"]:
+        actual_response = response.json()
+        print(f"Actual response: {actual_response}")
+        assert actual_response == {"images": expected_images, "headlines": expected_headlines}
+        for headline in actual_response["headlines"]:
             assert headline == "Ad headline"
 
 
@@ -73,13 +79,16 @@ def test_extract_text_bermuda():
     
     with patch("app.routes.OpenAI", return_value=mock_openai_client()):
         with patch.dict(os.environ, {"USE_OPENAI_HEADLINE": "True"}):
-            # Add logging to verify the environment variable
-            print(f"USE_OPENAI_HEADLINE in test: {os.getenv('USE_OPENAI_HEADLINE')}")
+            # Reload the module to apply the patched environment variable
+            import importlib
+            import app.routes
+            importlib.reload(app.routes)
             
             response = client.get("/extract-text", params={"url": url})
             assert response.status_code == 200
-            assert "images" in response.json()
-            assert "headlines" in response.json()
-            for headline in response.json()["headlines"]:
+            actual_response = response.json()
+            print(f"Actual response: {actual_response}")
+            assert "images" in actual_response
+            assert "headlines" in actual_response
+            for headline in actual_response["headlines"]:
                 assert len(headline.split()) <= 5  # Ensure each headline is no more than 5 words
-
