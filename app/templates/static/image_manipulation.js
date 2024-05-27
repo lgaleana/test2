@@ -4,10 +4,14 @@ async function downloadImage(imageElement, text, headlineElement, fontSize, colo
     const imageUrl = imageElement.dataset.blob || imageElement.src;
     const headline = headlineElement.textContent.trim();  // Get the headline text
 
+    // Sanitize the headline to create a valid filename
+    const sanitizedHeadline = headline.replace(/\s+/g, '_');
+
     // Log the coordinates and dimensions
     console.log(`Text: ${text}, X: ${x}, Y: ${y}, Font Size: ${fontSize}, Color: ${color}, Font Type: ${fontType}`);
     console.log(`Image URL: ${imageUrl}`);
     console.log(`Headline: ${headline}`);
+    console.log(`Sanitized Headline: ${sanitizedHeadline}`);
     console.log(`Headline dimensions: ${headlineElement.getBoundingClientRect()}`);
     console.log(`Image dimensions: ${imageElement.getBoundingClientRect()}`);
     console.log(`Image size: Width: ${imageElement.naturalWidth}, Height: ${imageElement.naturalHeight}`);
@@ -36,7 +40,7 @@ async function downloadImage(imageElement, text, headlineElement, fontSize, colo
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = `${headline}.png`;  // Use the headline as the filename
+        a.download = `${sanitizedHeadline}.png`;  // Use the sanitized headline as the filename
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
