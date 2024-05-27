@@ -6,7 +6,7 @@ from PIL import Image
 import os
 
 # Set the environment variable before importing the app
-os.environ["USE_OPENAI_HEADLINE"] = "False"
+os.environ["USE_OPENAI_HEADLINE"] = "True"
 
 from app.main import app
 from tests.mock_utils import mock_openai_client
@@ -38,26 +38,39 @@ def mock_requests_get_image(*args, **kwargs):
         response.status_code = 200
         return response
 
+def mock_openai_chat_completion_create(*args, **kwargs):
+    class MockResponse:
+        def __init__(self):
+            self.choices = [self]
+
+        @property
+        def message(self):
+            class Message:
+                def __init__(self):
+                    self.content = "Mocked Ad Headline"
+            return Message()
+
+    return MockResponse()
+
+def mock_openai_client():
+    mock_client = MagicMock()
+    mock_client.chat.completions.create.side_effect = mock_openai_chat_completion_create
+    return mock_client
+
 @patch('requests.get', side_effect=mock_requests_get_image)
-def test_extract_text_success_without_openai(mock_get):
+def test_extract_text_success_with_openai(mock_get):
     url = "http://example.com"
     expected_images = ["http://example.com/image1.jpg", "http://example.com/image2.jpg"]
-    expected_headlines = ["Ad headline", "Ad headline"]
+    expected_headlines = ["Mocked Ad Headline", "Mocked Ad Headline"]
 
-    with patch.dict(os.environ, {"USE_OPENAI_HEADLINE": "False"}):
-        # Reload the module to apply the patched environment variable
-        import importlib
-        import app.routes
-        importlib.reload(app.routes)
-        
+    with patch("app.routes.OpenAI", return_value=mock_openai_client()):
         response = client.get("/extract-text", params={"url": url})
         assert response.status_code == 200
         actual_response = response.json()
         print(f"Actual response: {actual_response}")
         assert actual_response == {"images": expected_images, "headlines": expected_headlines}
         for headline in actual_response["headlines"]:
-            assert headline == "Ad headline"
-
+            assert len(headline.split()) <= 5  # Ensure each headline is no more than 5 words
 
 def test_extract_text_bermuda():
     url = "https://thinkingofbermuda.com"

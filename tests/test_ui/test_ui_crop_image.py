@@ -68,7 +68,7 @@ def test_ui_crop_image(browser):
     page.route("**/download-image", lambda route: route.fulfill(
         status=200,
         content_type="image/png",
-        headers={"Content-Disposition": "attachment; filename=overlayed_image.png"},
+        headers={"Content-Disposition": "attachment; filename=Mocked Ad Headline.png"},
         body=b""
     ))
 
@@ -77,7 +77,10 @@ def test_ui_crop_image(browser):
         page.click("#image-result .image-container button:nth-of-type(2)")  # Ensure the correct button is clicked
     download = download_info.value
 
+    # Log the suggested filename
+    print(f"Suggested filename: {download.suggested_filename}")
+
     # Verify the download
-    assert download.suggested_filename == "overlayed_image.png"
+    assert download.suggested_filename == "Mocked Ad Headline.png"
 
     page.close()
